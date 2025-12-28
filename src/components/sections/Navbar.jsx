@@ -1,0 +1,36 @@
+import React from 'react';
+import { motion } from 'framer-motion';
+import { NAV_LINKS } from '../../constants';
+
+const Navbar = () => {
+  return (
+    <motion.nav 
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center p-4"
+    >
+      <div className="flex items-center justify-between w-full max-w-7xl px-6 py-3 bg-surface/50 backdrop-blur-lg border border-white/10 rounded-full">
+        <div className="text-xl font-bold tracking-tighter">MK.</div>
+        <div className="hidden md:flex gap-8">
+          {NAV_LINKS.map((link) => (
+            <a 
+              key={link.label} 
+              href={link.href} 
+              className="text-sm text-muted hover:text-white transition-colors"
+            >
+              {link.label}
+            </a>
+          ))}
+        </div>
+        <a 
+          href="#contact" 
+          className="px-5 py-2 text-sm bg-white text-black rounded-full font-medium hover:bg-neutral-200 transition-colors"
+        >
+          Hire Me
+        </a>
+      </div>
+    </motion.nav>
+  );
+};
+
+export default Navbar;
