@@ -163,3 +163,9 @@ export const CONTACT = {
     icon: <FiFileText />,
   },
 };
+export const STATS = [
+  { label: "Projects Completed", value: "10+" },
+  { label: "Git Commits", value: "500+" },
+  { label: "Years Experience", value: "2+" },
+  { label: "Technologies", value: "15+" },
+];
