@@ -1,36 +1,38 @@
 @import "tailwindcss";
 
 @theme {
-  --color-dark: #050505;
-  --color-surface: #111111;
+  --color-dark: #030303;
+  --color-surface: #0a0a0a;
   --color-accent: #3b82f6;
-  --color-muted: #a1a1aa;
-
-  --font-sans: "Inter", system-ui, sans-serif;
+  --font-geist: "Geist", sans-serif;
 }
 
 @layer base {
   body {
-    background-color: var(--color-dark);
-    color: white;
-    -webkit-font-smoothing: antialiased;
+    @apply bg-dark text-white font-geist selection:bg-accent/30;
   }
 }
 
-:root {
-  color-scheme: dark;
+/* Premium Noise Texture Overlay */
+.noise {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "";
+  opacity: 0.03;
+  z-index: 9999;
+  pointer-events: none;
+  background-image: url("https://grainy-gradients.vercel.app/noise.svg");
 }
 
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--color-dark);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--color-surface);
-  border: 2px solid var(--color-dark);
-  border-radius: 10px;
+/* Modern Grid Background */
+.grid-bg {
+  background-image: radial-gradient(
+    circle at 2px 2px,
+    rgba(255, 255, 255, 0.05) 1px,
+    transparent 0
+  );
+  background-size: 40px 40px;
 }

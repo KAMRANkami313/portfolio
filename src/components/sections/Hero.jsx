@@ -1,57 +1,96 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { HERO_CONTENT } from '../../constants';
-import { FiDownload, FiGithub, FiLinkedin } from 'react-icons/fi';
+import React from "react";
+import { motion } from "framer-motion";
+import { HERO_CONTENT } from "../../constants";
+import Reveal from "../ui/Reveal";
+import {
+  FiDownload,
+  FiGithub,
+  FiLinkedin,
+} from "react-icons/fi";
 
 const Hero = () => {
   return (
-    <section className="relative pt-36 pb-20 md:pt-48 md:pb-32 overflow-hidden">
-      <div className="container mx-auto px-6 relative z-10">
-        <div className="max-w-4xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+    <section className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+      <div className="grid-bg absolute inset-0 -z-10" />
+
+      <div className="container mx-auto px-6 text-center">
+        <Reveal>
+          <span className="inline-block px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-sm font-medium text-accent mb-6">
+            Building the future of MERN SaaS
+          </span>
+        </Reveal>
+
+        <Reveal>
+          <h1 className="text-6xl md:text-8xl font-bold tracking-tighter mb-6 bg-linear-to-b from-white to-white/40 bg-clip-text text-transparent">
+            {HERO_CONTENT.name}
+          </h1>
+        </Reveal>
+
+        <Reveal>
+          <h2 className="text-2xl md:text-4xl font-semibold text-accent mb-6">
+            {HERO_CONTENT.role}
+          </h2>
+        </Reveal>
+
+        <Reveal>
+          <p className="text-muted text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed font-light">
+            {HERO_CONTENT.description}
+          </p>
+        </Reveal>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8 }}
+          className="flex flex-col md:flex-row items-center justify-center gap-4"
+        >
+          <a
+            href="#projects"
+            className="group relative px-8 py-4 bg-white text-black rounded-full font-bold overflow-hidden transition-all hover:scale-105"
           >
-            <span className="px-4 py-2 rounded-full border border-accent/30 bg-accent/10 text-accent text-sm font-medium">
-              Available for Internships
+            <span className="relative z-10">
+              Explore Projects
             </span>
-            <h1 className="mt-8 text-5xl md:text-7xl font-bold tracking-tight leading-[1.1]">
-              {HERO_CONTENT.name}
-              <span className="block text-muted">{HERO_CONTENT.role}</span>
-            </h1>
-            <p className="mt-6 text-lg md:text-xl text-muted max-w-2xl leading-relaxed">
-              {HERO_CONTENT.description}
-            </p>
-          </motion.div>
 
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="mt-10 flex flex-wrap gap-4"
-          >
-            <a href="#projects" className="px-8 py-4 bg-accent hover:bg-blue-600 text-white rounded-xl font-semibold transition-all shadow-lg shadow-accent/25">
-              View My Work
-            </a>
-            <a href={HERO_CONTENT.resumeLink} className="flex items-center gap-2 px-8 py-4 bg-surface border border-white/10 hover:bg-white/5 rounded-xl font-semibold transition-all">
-              <FiDownload /> Resume
-            </a>
-          </motion.div>
+            <div className="absolute inset-0 bg-accent translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+          </a>
 
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.5 }}
-            className="mt-12 flex gap-6 text-2xl text-muted"
+          <a
+            href={HERO_CONTENT.resumeLink}
+            className="flex items-center gap-2 px-8 py-4 bg-surface border border-white/10 rounded-full font-bold hover:bg-white/5 transition-all"
           >
-            <a href={HERO_CONTENT.githubLink} className="hover:text-white transition-colors"><FiGithub /></a>
-            <a href={HERO_CONTENT.linkedinLink} className="hover:text-white transition-colors"><FiLinkedin /></a>
-          </motion.div>
-        </div>
+            <FiDownload />
+            Download Resume
+          </a>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1 }}
+          className="flex items-center justify-center gap-6 mt-10 text-2xl text-muted"
+        >
+          <a
+            href={HERO_CONTENT.githubLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-white transition-colors"
+          >
+            <FiGithub />
+          </a>
+
+          <a
+            href={HERO_CONTENT.linkedinLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-white transition-colors"
+          >
+            <FiLinkedin />
+          </a>
+        </motion.div>
       </div>
-      
-      <div className="absolute top-0 right-0 -z-10 w-125 h-125 bg-accent/20 blur-[120px] rounded-full translate-x-1/2 -translate-y-1/2" />
+
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -z-20 w-200 h-200 bg-accent/10 blur-[150px] rounded-full" />
     </section>
   );
 };
