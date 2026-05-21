@@ -10,6 +10,9 @@ A premium, modern portfolio built with React, Tailwind CSS v4, and Framer Motion
 - [x] **Projects Section**: Glassmorphism cards showcasing EventPulse and mobile projects.
 - [x] **Experience Timeline**: A vertical animated journey showcasing education and technical growth.
 - [x] **Contact Section**: Professional CTA with Resume download integration and social links.
+- [x] **Smooth Scrolling**: Integrated Lenis for a premium user experience.
+- [x] **Dynamic Navbar**: Scroll-responsive navigation with glassmorphism effects.
+- [x] **Global Polish**: Ambient background glows and optimized layouts.
 
 ## 🛠️ Tech Stack
 

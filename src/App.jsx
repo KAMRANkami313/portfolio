@@ -1,5 +1,5 @@
 import React from 'react';
-import Navbar from './components/sections/Navbar';
+import Layout from './layout/Layout';
 import Hero from './components/sections/Hero';
 import Skills from './components/sections/Skills';
 import Projects from './components/sections/Projects';
@@ -8,16 +8,13 @@ import Contact from './components/sections/Contact';
 
 const App = () => {
   return (
-    <div className="min-h-screen bg-dark text-white selection:bg-accent/30">
-      <Navbar />
-      <main>
-        <Hero />
-        <Skills />
-        <Projects />
-        <Experience />
-        <Contact />
-      </main>
-    </div>
+    <Layout>
+      <Hero />
+      <Skills />
+      <Projects />
+      <Experience />
+      <Contact />
+    </Layout>
   );
 };
 
