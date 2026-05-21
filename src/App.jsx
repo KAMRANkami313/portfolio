@@ -7,11 +7,14 @@ import Skills from './components/sections/Skills';
 import Projects from './components/sections/Projects';
 import Experience from './components/sections/Experience';
 import Contact from './components/sections/Contact';
-
+import Terminal from './components/ui/Terminal';
 const App = () => {
   return (
     <Layout>
       <Hero />
+       <div className="container mx-auto px-6">
+         <Terminal /> {/* Shows you are a coder at heart */}
+      </div>
       <Stats />      {/* Adds credibility */}
       <TechMarquee /> {/* Adds motion */}
       <Projects />

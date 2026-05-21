@@ -1,8 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Lenis from "lenis";
 import Navbar from "../components/sections/Navbar";
 
 const Layout = ({ children }) => {
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
   useEffect(() => {
     const lenis = new Lenis();
 
@@ -15,6 +17,18 @@ const Layout = ({ children }) => {
 
     return () => {
       lenis.destroy?.();
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
     };
   }, []);
 
@@ -48,8 +62,15 @@ const Layout = ({ children }) => {
   }, []);
 
   return (
-    <div className="relative min-h-screen bg-dark text-white antialiased">
+    <div className="relative min-h-screen bg-dark text-white antialiased overflow-x-hidden">
       <div className="noise" />
+
+      <div
+        className="pointer-events-none fixed inset-0 z-30 transition-opacity duration-300"
+        style={{
+          background: `radial-gradient(600px at ${mousePos.x}px ${mousePos.y}px, rgba(59, 130, 246, 0.06), transparent 80%)`,
+        }}
+      />
 
       <div className="fixed inset-0 -z-10 overflow-hidden">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-accent/10 blur-[120px] rounded-full" />
