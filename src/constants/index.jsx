@@ -82,6 +82,25 @@ export const SKILLS = [
   },
 ];
 
+export const SKILLS_CATEGORIES = [
+  {
+    title: "Frontend Engineering",
+    skills: ["React.js", "Next.js", "Tailwind CSS", "Framer Motion", "Redux Toolkit"]
+  },
+  {
+    title: "Backend & Systems",
+    skills: ["Node.js", "Express.js", "Socket.io", "REST APIs", "JWT Auth"]
+  },
+  {
+    title: "Database & Cloud",
+    skills: ["MongoDB", "PostgreSQL", "Redis", "Docker", "AWS S3"]
+  },
+  {
+    title: "Tools & Payments",
+    skills: ["Git", "Stripe API", "Postman", "Vercel", "Linux"]
+  }
+];
+
 export const PROJECTS = [
   {
     title: "EventPulse",
@@ -163,6 +182,7 @@ export const CONTACT = {
     icon: <FiFileText />,
   },
 };
+
 export const STATS = [
   { label: "Projects Completed", value: "10+" },
   { label: "Git Commits", value: "500+" },
