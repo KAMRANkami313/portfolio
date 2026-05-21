@@ -91,7 +91,7 @@ export const PROJECTS = [
       "Tailwind",
     ],
     github: "https://github.com/KAMRANkami313",
-    live: "#",
+    live: "https://eventpulse-tawny.vercel.app/",
   },
   {
     title: "Native Tasker",
@@ -101,6 +101,37 @@ export const PROJECTS = [
     image: project2,
     tech: ["React Native", "Redux", "Node.js", "SQLite"],
     github: "https://github.com/KAMRANkami313",
-    live: "#",
+    live: "https://eventpulse-tawny.vercel.app/",
+  },
+];
+
+export const EXPERIENCE = [
+  {
+    year: "2024 - Present",
+    title: "Full-Stack Specialization",
+    company: "Personal Lab",
+    description:
+      "Architecting EventPulse, a scalable event management SaaS. Focusing on real-time systems using Socket.io and secure payment processing with Stripe.",
+  },
+  {
+    year: "2023 - 2024",
+    title: "MERN Stack Development",
+    company: "Self-Directed Learning",
+    description:
+      "Mastered React.js and Node.js ecosystem. Built various full-stack applications including social media clones and task management systems.",
+  },
+  {
+    year: "2022 - Present",
+    title: "BS Computer Science",
+    company: "Air University",
+    description:
+      "Focusing on Software Engineering principles, Data Structures, and Database Management Systems. Maintaining a strong academic foundation.",
+  },
+  {
+    year: "2022",
+    title: "Started Web Development",
+    company: "Frontend Basics",
+    description:
+      "Began journey with HTML, CSS, and JavaScript. Developed a passion for building clean and responsive user interfaces.",
   },
 ];

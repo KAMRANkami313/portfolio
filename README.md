@@ -8,6 +8,7 @@ A premium, modern portfolio built with React, Tailwind CSS v4, and Framer Motion
 - [x] **Hero Section**: Animated typography and SaaS-style call-to-actions.
 - [x] **Skills Section**: Animated tech stack grid with interactive icons.
 - [x] **Projects Section**: Glassmorphism cards showcasing EventPulse and mobile projects.
+- [x] **Experience Timeline**: A vertical animated journey showcasing education and technical growth.
 
 ## 🛠️ Tech Stack
 
