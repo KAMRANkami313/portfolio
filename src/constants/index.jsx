@@ -1,15 +1,18 @@
-import { 
-  RiReactjsLine, 
-  RiNodejsLine, 
-  RiTailwindCssFill 
+import project1 from "../assets/eventpulse.webp";
+import project2 from "../assets/todo.webp";
+
+import {
+  RiReactjsLine,
+  RiNodejsLine,
+  RiTailwindCssFill,
 } from "react-icons/ri";
 
-import { 
-  SiMongodb, 
-  SiExpress, 
-  SiDocker, 
-  SiStripe, 
-  SiSocketdotio 
+import {
+  SiMongodb,
+  SiExpress,
+  SiDocker,
+  SiStripe,
+  SiSocketdotio,
 } from "react-icons/si";
 
 export const HERO_CONTENT = {
@@ -69,5 +72,35 @@ export const SKILLS = [
     name: "Socket.io",
     icon: <SiSocketdotio className="text-white" />,
     level: "Real-time",
+  },
+];
+
+export const PROJECTS = [
+  {
+    title: "EventPulse",
+    subtitle: "Full-Stack Event Management SaaS",
+    description:
+      "A production-grade platform featuring real-time booking, Stripe payments, and QR code ticket generation. Built to handle high-concurrency event registrations.",
+    image: project1,
+    tech: [
+      "React",
+      "Node.js",
+      "MongoDB",
+      "Stripe",
+      "Socket.io",
+      "Tailwind",
+    ],
+    github: "https://github.com/KAMRANkami313",
+    live: "#",
+  },
+  {
+    title: "Native Tasker",
+    subtitle: "React Native Productivity App",
+    description:
+      "A cross-platform mobile application for task management with offline persistence, push notifications, and biometric authentication.",
+    image: project2,
+    tech: ["React Native", "Redux", "Node.js", "SQLite"],
+    github: "https://github.com/KAMRANkami313",
+    live: "#",
   },
 ];
