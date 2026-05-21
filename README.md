@@ -9,6 +9,7 @@ A premium, modern portfolio built with React, Tailwind CSS v4, and Framer Motion
 - [x] **Skills Section**: Animated tech stack grid with interactive icons.
 - [x] **Projects Section**: Glassmorphism cards showcasing EventPulse and mobile projects.
 - [x] **Experience Timeline**: A vertical animated journey showcasing education and technical growth.
+- [x] **Contact Section**: Professional CTA with Resume download integration and social links.
 
 ## 🛠️ Tech Stack
 

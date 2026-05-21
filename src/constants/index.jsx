@@ -15,14 +15,21 @@ import {
   SiSocketdotio,
 } from "react-icons/si";
 
+import {
+  FiMail,
+  FiGithub,
+  FiLinkedin,
+  FiFileText,
+} from "react-icons/fi";
+
 export const HERO_CONTENT = {
   name: "Muhammad Kamran",
   role: "MERN Stack Developer",
   description:
     "I build scalable, production-ready full-stack applications with a focus on performance and user experience.",
-  resumeLink: "#",
+  resumeLink: "/resume.pdf",
   githubLink: "https://github.com/KAMRANkami313",
-  linkedinLink: "#",
+  linkedinLink: "https://linkedin.com/in/muhammad-kamran-aa7620296",
 };
 
 export const NAV_LINKS = [
@@ -135,3 +142,24 @@ export const EXPERIENCE = [
       "Began journey with HTML, CSS, and JavaScript. Developed a passion for building clean and responsive user interfaces.",
   },
 ];
+
+export const CONTACT = {
+  email: "232501@students.au.edu.pk",
+  socials: [
+    {
+      name: "LinkedIn",
+      href: "https://linkedin.com/in/muhammad-kamran-aa7620296",
+      icon: <FiLinkedin />,
+    },
+    {
+      name: "GitHub",
+      href: "https://github.com/KAMRANkami313",
+      icon: <FiGithub />,
+    },
+  ],
+  resume: {
+    label: "Download Resume",
+    href: "/resume.pdf",
+    icon: <FiFileText />,
+  },
+};
