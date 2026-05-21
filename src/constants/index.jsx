@@ -1,0 +1,73 @@
+import { 
+  RiReactjsLine, 
+  RiNodejsLine, 
+  RiTailwindCssFill 
+} from "react-icons/ri";
+
+import { 
+  SiMongodb, 
+  SiExpress, 
+  SiDocker, 
+  SiStripe, 
+  SiSocketdotio 
+} from "react-icons/si";
+
+export const HERO_CONTENT = {
+  name: "Muhammad Kamran",
+  role: "MERN Stack Developer",
+  description:
+    "I build scalable, production-ready full-stack applications with a focus on performance and user experience.",
+  resumeLink: "#",
+  githubLink: "https://github.com/KAMRANkami313",
+  linkedinLink: "#",
+};
+
+export const NAV_LINKS = [
+  { label: "Projects", href: "#projects" },
+  { label: "Skills", href: "#skills" },
+  { label: "Experience", href: "#experience" },
+  { label: "Contact", href: "#contact" },
+];
+
+export const SKILLS = [
+  {
+    name: "React.js",
+    icon: <RiReactjsLine className="text-cyan-400" />,
+    level: "Advanced",
+  },
+  {
+    name: "Node.js",
+    icon: <RiNodejsLine className="text-green-500" />,
+    level: "Intermediate",
+  },
+  {
+    name: "MongoDB",
+    icon: <SiMongodb className="text-green-600" />,
+    level: "Intermediate",
+  },
+  {
+    name: "Express",
+    icon: <SiExpress className="text-white" />,
+    level: "Intermediate",
+  },
+  {
+    name: "Tailwind",
+    icon: <RiTailwindCssFill className="text-sky-400" />,
+    level: "Expert",
+  },
+  {
+    name: "Docker",
+    icon: <SiDocker className="text-blue-500" />,
+    level: "Beginner",
+  },
+  {
+    name: "Stripe",
+    icon: <SiStripe className="text-indigo-500" />,
+    level: "Integration",
+  },
+  {
+    name: "Socket.io",
+    icon: <SiSocketdotio className="text-white" />,
+    level: "Real-time",
+  },
+];
