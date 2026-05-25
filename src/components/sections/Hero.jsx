@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { HERO_CONTENT } from "../../constants";
 import Reveal from "../ui/Reveal";
 import ProfileImage from "../ui/ProfileImage";
+import GithubStats from "../ui/GithubStats";
 import {
   FiDownload,
   FiGithub,
@@ -67,29 +68,33 @@ const Hero = () => {
           </a>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1 }}
-          className="flex items-center justify-center gap-6 mt-10 text-2xl text-muted"
+          className="flex flex-col items-center gap-8 mt-12"
         >
-          <a
-            href={HERO_CONTENT.githubLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-white transition-colors"
-          >
-            <FiGithub />
-          </a>
+          <GithubStats />
+          
+          <div className="flex items-center justify-center gap-6 text-2xl text-muted">
+            <a
+              href={HERO_CONTENT.githubLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-white transition-colors"
+            >
+              <FiGithub />
+            </a>
 
-          <a
-            href={HERO_CONTENT.linkedinLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-white transition-colors"
-          >
-            <FiLinkedin />
-          </a>
+            <a
+              href={HERO_CONTENT.linkedinLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-white transition-colors"
+            >
+              <FiLinkedin />
+            </a>
+          </div>
         </motion.div>
       </div>
 

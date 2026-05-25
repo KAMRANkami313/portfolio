@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { NAV_LINKS } from '../../constants';
+import TimeDisplay from '../ui/TimeDisplay';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -25,23 +26,30 @@ const Navbar = () => {
           : "bg-transparent border-transparent"
       }`}>
         <div className="text-xl font-bold tracking-tighter">MK.</div>
+        
         <div className="hidden md:flex gap-8">
           {NAV_LINKS.map((link) => (
             <a 
               key={link.label} 
               href={link.href} 
-              className="text-sm text-muted hover:text-white transition-colors"
+              className="text-sm text-muted hover:text-white transition-colors font-medium"
             >
               {link.label}
             </a>
           ))}
         </div>
-        <a 
-          href="#contact" 
-          className="px-5 py-2 text-sm bg-white text-black rounded-full font-medium hover:scale-105 transition-transform"
-        >
-          Hire Me
-        </a>
+
+        <div className="flex items-center gap-6">
+          <div className="hidden lg:block">
+            <TimeDisplay />
+          </div>
+          <a 
+            href="#contact" 
+            className="px-5 py-2 text-sm bg-white text-black rounded-full font-bold hover:scale-105 transition-transform"
+          >
+            Hire Me
+          </a>
+        </div>
       </div>
     </motion.nav>
   );

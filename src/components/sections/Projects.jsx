@@ -4,11 +4,10 @@ import { PROJECTS } from "../../constants";
 import { FiGithub, FiExternalLink, FiCpu } from "react-icons/fi";
 import SpotlightCard from "../ui/SpotlightCard";
 import { useScramble } from "../../hooks/useScramble";
+import Architecture from "../ui/Architecture";
 
 const Projects = () => {
   const [filter, setFilter] = useState("All");
-  
-  // God Tier Scramble Title
   const scrambledTitle = useScramble("PROJECTS_V2.0", 400);
 
   const categories = ["All", "React", "Node.js", "React Native"];
@@ -59,12 +58,19 @@ const Projects = () => {
               viewport={{ once: true }}
             >
               <SpotlightCard className="group transition-all duration-500 rounded-3xl bg-surface border border-white/5 overflow-hidden hover:border-accent/30 flex flex-col h-full">
-                <div className="aspect-video overflow-hidden">
+                <div className="aspect-video overflow-hidden relative">
                   <img
                     src={project.image}
                     alt={project.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   />
+                  {project.title === "EventPulse" && (
+                    <div className="absolute top-4 left-4">
+                      <span className="px-3 py-1 bg-accent text-white text-[10px] font-black uppercase tracking-widest rounded-full shadow-2xl">
+                        Core Architecture
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="p-8 grow">
@@ -114,7 +120,6 @@ const Projects = () => {
                     ))}
                   </div>
 
-                  {/* Technical Deep Dive (Architecture Modal Style) */}
                   <div className="mt-auto pt-6 border-t border-white/5 bg-black/20 -mx-8 px-8 pb-4">
                      <div className="flex items-center gap-2 mb-4">
                         <FiCpu className="text-accent text-sm" />
@@ -142,6 +147,8 @@ const Projects = () => {
                           </p>
                         </div>
                      </div>
+
+                     {project.title === "EventPulse" && <Architecture />}
                   </div>
                 </div>
               </SpotlightCard>

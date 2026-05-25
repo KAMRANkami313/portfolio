@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import Layout from './layout/Layout';
 import Loader from './components/ui/Loader';
@@ -20,6 +20,14 @@ import ColorPicker from './components/ui/ColorPicker';
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    console.log(
+      "%c HIRE ME? %c kamrank.dev ",
+      "background: #3b82f6; color: white; font-weight: bold; padding: 4px 8px; border-radius: 4px 0 0 4px;",
+      "background: #111; color: #3b82f6; padding: 4px 8px; border-radius: 0 4px 4px 0; border: 1px solid #3b82f6;"
+    );
+  }, []);
 
   return (
     <>
