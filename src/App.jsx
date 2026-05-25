@@ -12,10 +12,11 @@ import Experience from './components/sections/Experience';
 import Contact from './components/sections/Contact';
 import StatusBar from './components/ui/StatusBar';
 import CopyEmail from './components/ui/CopyEmail';
-
-// God Tier UI Additions
 import Dock from './components/ui/Dock';
 import ShareButton from './components/ui/ShareButton';
+import Aura from './components/ui/Aura';
+import CommandPalette from './components/ui/CommandPalette';
+import ColorPicker from './components/ui/ColorPicker';
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -28,13 +29,17 @@ const App = () => {
 
       {!isLoading && (
         <Layout>
-          {/* Global UI Elements */}
+          <Aura />
+          <CommandPalette />
           <Cursor />
           <CopyEmail />
           <ShareButton />
           <StatusBar />
+          
+          <div className="fixed top-24 left-6 z-40 hidden lg:block">
+            <ColorPicker />
+          </div>
 
-          {/* Sectional Content */}
           <Hero />
           <Stats />
           <TechMarquee />
@@ -43,7 +48,6 @@ const App = () => {
           <Experience />
           <Contact />
 
-          {/* Floating Navigation Navigation */}
           <Dock />
         </Layout>
       )}
