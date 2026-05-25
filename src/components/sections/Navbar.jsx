@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { NAV_LINKS } from '../../constants';
 import TimeDisplay from '../ui/TimeDisplay';
+import DevToggle from '../ui/DevToggle';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -40,7 +41,8 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-6">
-          <div className="hidden lg:block">
+          <div className="hidden lg:flex items-center gap-4">
+            <DevToggle />
             <TimeDisplay />
           </div>
           <a 

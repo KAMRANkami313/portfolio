@@ -1,8 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FiHome, FiCode, FiUser, FiMail, FiCpu } from 'react-icons/fi';
+import { useAudio } from '../../hooks/useAudio';
 
 const Dock = () => {
+  const { playHover, playClick } = useAudio();
+  
   const items = [
     { icon: <FiHome />, href: "#hero" },
     { icon: <FiCpu />, href: "#skills" },
@@ -22,6 +25,8 @@ const Dock = () => {
           <motion.a
             key={i}
             href={item.href}
+            onMouseEnter={playHover}
+            onClick={playClick}
             whileHover={{ scale: 1.2, y: -10 }}
             className="p-3 text-xl text-muted hover:text-accent transition-colors"
           >

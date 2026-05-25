@@ -4,6 +4,8 @@ import Layout from './layout/Layout';
 import Loader from './components/ui/Loader';
 import Cursor from './components/ui/Cursor';
 import Hero from './components/sections/Hero';
+import About from './components/sections/About';
+import Terminal from './components/ui/Terminal';
 import TechMarquee from './components/ui/TechMarquee';
 import Stats from './components/ui/Stats';
 import Projects from './components/sections/Projects';
@@ -17,6 +19,7 @@ import ShareButton from './components/ui/ShareButton';
 import Aura from './components/ui/Aura';
 import CommandPalette from './components/ui/CommandPalette';
 import ColorPicker from './components/ui/ColorPicker';
+import Performance from './components/ui/Performance';
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -42,6 +45,7 @@ const App = () => {
           <Cursor />
           <CopyEmail />
           <ShareButton />
+          <Performance />
           <StatusBar />
           
           <div className="fixed top-24 left-6 z-40 hidden lg:block">
@@ -49,6 +53,13 @@ const App = () => {
           </div>
 
           <Hero />
+          
+          {/* Terminal Integrated Here */}
+          <div className="container mx-auto px-6 mb-24">
+            <Terminal />
+          </div>
+
+          <About />
           <Stats />
           <TechMarquee />
           <Projects />

@@ -3,13 +3,22 @@ import { motion } from 'framer-motion';
 import { FiGithub } from 'react-icons/fi';
 
 const GithubStats = () => {
-  const [stats, setStats] = useState({ repos: 0 });
+  const [stats, setStats] = useState({ repos: "..." });
 
   useEffect(() => {
     fetch('https://api.github.com/users/KAMRANkami313')
-      .then(res => res.json())
-      .then(data => setStats({ repos: data.public_repos || 0 }))
-      .catch(() => setStats({ repos: 12 })); 
+      .then(res => {
+        if (!res.ok) throw new Error('Rate limited');
+        return res.json();
+      })
+      .then(data => {
+        if (data.public_repos !== undefined) {
+          setStats({ repos: data.public_repos });
+        }
+      })
+      .catch(() => {
+        setStats({ repos: 15 });
+      }); 
   }, []);
 
   return (

@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import Heatmap from '../ui/Heatmap';
 
 const Terminal = () => {
   const codeLines = [
@@ -33,6 +34,14 @@ const Terminal = () => {
             <span className={line.color}>{line.text}</span>
           </motion.div>
         ))}
+        
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ delay: 1 }}
+        >
+          <Heatmap />
+        </motion.div>
       </div>
     </div>
   );
