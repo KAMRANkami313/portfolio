@@ -13,6 +13,10 @@ import Contact from './components/sections/Contact';
 import StatusBar from './components/ui/StatusBar';
 import CopyEmail from './components/ui/CopyEmail';
 
+// God Tier UI Additions
+import Dock from './components/ui/Dock';
+import ShareButton from './components/ui/ShareButton';
+
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
 
@@ -24,16 +28,23 @@ const App = () => {
 
       {!isLoading && (
         <Layout>
+          {/* Global UI Elements */}
           <Cursor />
           <CopyEmail />
+          <ShareButton />
+          <StatusBar />
+
+          {/* Sectional Content */}
           <Hero />
           <Stats />
-          <StatusBar />
           <TechMarquee />
           <Projects />
           <Skills />
           <Experience />
           <Contact />
+
+          {/* Floating Navigation Navigation */}
+          <Dock />
         </Layout>
       )}
     </>

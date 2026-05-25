@@ -1,11 +1,15 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { PROJECTS } from "../../constants";
-import { FiGithub, FiExternalLink } from "react-icons/fi";
+import { FiGithub, FiExternalLink, FiCpu } from "react-icons/fi";
 import SpotlightCard from "../ui/SpotlightCard";
+import { useScramble } from "../../hooks/useScramble";
 
 const Projects = () => {
   const [filter, setFilter] = useState("All");
+  
+  // God Tier Scramble Title
+  const scrambledTitle = useScramble("PROJECTS_V2.0", 400);
 
   const categories = ["All", "React", "Node.js", "React Native"];
 
@@ -19,11 +23,12 @@ const Projects = () => {
       <div className="container mx-auto px-6">
         <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
           <div>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tighter">
-              PROJECTS_V2.0
+            <h2 className="text-3xl md:text-4xl font-mono font-bold tracking-tighter text-accent">
+              {scrambledTitle}
             </h2>
-            <p className="text-muted mt-2">
-              Filtered by technical stack.
+            <p className="text-muted mt-2 font-mono text-sm">
+              <span className="text-accent/50 mr-2">▶</span> 
+              System filtered by technical stack.
             </p>
           </div>
 
@@ -53,7 +58,7 @@ const Projects = () => {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true }}
             >
-              <SpotlightCard className="group transition-all duration-500 rounded-3xl bg-surface border border-white/5 overflow-hidden hover:border-accent/30">
+              <SpotlightCard className="group transition-all duration-500 rounded-3xl bg-surface border border-white/5 overflow-hidden hover:border-accent/30 flex flex-col h-full">
                 <div className="aspect-video overflow-hidden">
                   <img
                     src={project.image}
@@ -62,13 +67,13 @@ const Projects = () => {
                   />
                 </div>
 
-                <div className="p-8">
+                <div className="p-8 grow">
                   <div className="flex justify-between items-start mb-4">
                     <div>
                       <h3 className="text-2xl font-bold text-white">
                         {project.title}
                       </h3>
-                      <p className="text-accent text-sm font-medium mt-1">
+                      <p className="text-accent text-sm font-medium mt-1 uppercase tracking-widest font-mono">
                         {project.subtitle}
                       </p>
                     </div>
@@ -98,15 +103,45 @@ const Projects = () => {
                     {project.description}
                   </p>
 
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2 mb-8">
                     {project.tech.map((tag, i) => (
                       <span
                         key={i}
-                        className="px-3 py-1 text-xs font-medium bg-white/5 text-muted rounded-full border border-white/5"
+                        className="px-3 py-1 text-[10px] font-mono bg-white/5 text-muted rounded-full border border-white/5"
                       >
                         {tag}
                       </span>
                     ))}
+                  </div>
+
+                  {/* Technical Deep Dive (Architecture Modal Style) */}
+                  <div className="mt-auto pt-6 border-t border-white/5 bg-black/20 -mx-8 px-8 pb-4">
+                     <div className="flex items-center gap-2 mb-4">
+                        <FiCpu className="text-accent text-sm" />
+                        <span className="text-[10px] text-accent uppercase font-black tracking-[0.2em]">Engineering Report</span>
+                     </div>
+                     
+                     <div className="space-y-4">
+                        <div>
+                          <p className="text-[10px] text-white/40 uppercase font-bold mb-1 flex items-center gap-2">
+                             <span className="w-1 h-1 bg-red-500 rounded-full animate-pulse" />
+                             Challenge
+                          </p>
+                          <p className="text-xs text-muted leading-relaxed italic border-l border-white/10 pl-3">
+                            {project.challenge}
+                          </p>
+                        </div>
+                        
+                        <div>
+                          <p className="text-[10px] text-white/40 uppercase font-bold mb-1 flex items-center gap-2">
+                             <span className="w-1 h-1 bg-green-500 rounded-full" />
+                             Solution
+                          </p>
+                          <p className="text-xs text-muted leading-relaxed italic border-l border-white/10 pl-3">
+                            {project.solution}
+                          </p>
+                        </div>
+                     </div>
                   </div>
                 </div>
               </SpotlightCard>
