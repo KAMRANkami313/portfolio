@@ -1,9 +1,18 @@
 import React, { useEffect, useState } from "react";
 import Lenis from "lenis";
 import Navbar from "../components/sections/Navbar";
+import { motion, useScroll, useSpring } from "framer-motion";
 
 const Layout = ({ children }) => {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  const { scrollYProgress } = useScroll();
+
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001,
+  });
 
   useEffect(() => {
     const lenis = new Lenis();
@@ -63,6 +72,11 @@ const Layout = ({ children }) => {
 
   return (
     <div className="relative min-h-screen bg-dark text-white antialiased overflow-x-hidden">
+      <motion.div
+        className="fixed top-0 left-0 right-0 h-1 bg-accent z-100 origin-left"
+        style={{ scaleX }}
+      />
+
       <div className="noise" />
 
       <div

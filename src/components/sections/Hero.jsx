@@ -2,6 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { HERO_CONTENT } from "../../constants";
 import Reveal from "../ui/Reveal";
+import ProfileImage from "../ui/ProfileImage";
 import {
   FiDownload,
   FiGithub,
@@ -14,6 +15,8 @@ const Hero = () => {
       <div className="grid-bg absolute inset-0 -z-10" />
 
       <div className="container mx-auto px-6 text-center">
+        <ProfileImage />
+
         <Reveal>
           <span className="inline-block px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-sm font-medium text-accent mb-6">
             Building the future of MERN SaaS

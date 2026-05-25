@@ -1,24 +1,51 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { PROJECTS } from "../../constants";
 import { FiGithub, FiExternalLink } from "react-icons/fi";
 import SpotlightCard from "../ui/SpotlightCard";
 
 const Projects = () => {
+  const [filter, setFilter] = useState("All");
+
+  const categories = ["All", "React", "Node.js", "React Native"];
+
+  const filteredProjects =
+    filter === "All"
+      ? PROJECTS
+      : PROJECTS.filter((p) => p.tech.includes(filter));
+
   return (
-    <section id="projects" className="py-20">
+    <section id="projects" className="py-24">
       <div className="container mx-auto px-6">
-        <div className="mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
-            Featured Projects
-          </h2>
-          <p className="mt-4 text-muted max-w-2xl">
-            A selection of my recent work, focusing on full-stack development and scalable architectures.
-          </p>
+        <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+          <div>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tighter">
+              PROJECTS_V2.0
+            </h2>
+            <p className="text-muted mt-2">
+              Filtered by technical stack.
+            </p>
+          </div>
+
+          <div className="flex gap-2 p-1 bg-surface border border-white/5 rounded-xl flex-wrap">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setFilter(cat)}
+                className={`px-4 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                  filter === cat
+                    ? "bg-accent text-white"
+                    : "text-muted hover:text-white"
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {PROJECTS.map((project, index) => (
+          {filteredProjects.map((project, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 20 }}
