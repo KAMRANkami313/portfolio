@@ -4,14 +4,13 @@ const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
   const [accent, setAccent] = useState(() => {
-    return localStorage.getItem('kamran-ui-accent') || '#3b82f6';
+    return localStorage.getItem('kamran-ui-accent') || '#6366f1';
   });
 
   useEffect(() => {
     document.documentElement.style.setProperty('--color-accent', accent);
     localStorage.setItem('kamran-ui-accent', accent);
     
-    // Convert hex to RGB for use in rgba() CSS
     const r = parseInt(accent.slice(1, 3), 16);
     const g = parseInt(accent.slice(3, 5), 16);
     const b = parseInt(accent.slice(5, 7), 16);

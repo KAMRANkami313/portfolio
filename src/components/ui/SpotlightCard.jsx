@@ -12,8 +12,8 @@ const SpotlightCard = ({ children, className = "" }) => {
   const mouseX = useSpring(x, springConfig);
   const mouseY = useSpring(y, springConfig);
 
-  const rotateX = useTransform(mouseY, [-0.5, 0.5], ["10deg", "-10deg"]);
-  const rotateY = useTransform(mouseX, [-0.5, 0.5], ["-10deg", "10deg"]);
+  const rotateX = useTransform(mouseY, [-0.5, 0.5], ["8deg", "-8deg"]);
+  const rotateY = useTransform(mouseX, [-0.5, 0.5], ["-8deg", "8deg"]);
 
   const handleMouseMove = (e) => {
     if (!ref.current) return;
@@ -52,19 +52,23 @@ const SpotlightCard = ({ children, className = "" }) => {
         transformStyle: "preserve-3d",
         perspective: "1000px"
       }}
-      className={`relative rounded-4xl border border-white/10 bg-surface/40 backdrop-blur-md transition-all duration-500 overflow-hidden ${className}`}
+      className={`relative rounded-3xl border border-white/[0.06] bg-surface/30 backdrop-blur-md transition-all duration-500 overflow-hidden ${className}`}
     >
+      {/* Spotlight glow */}
       <div
         className="pointer-events-none absolute -inset-px transition duration-500 z-30"
         style={{
-          background: `radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(var(--color-accent-rgb, 59, 130, 246), 0.15), transparent 40%)`,
+          background: `radial-gradient(500px circle at var(--mouse-x) var(--mouse-y), rgba(var(--color-accent-rgb, 99, 102, 241), 0.1), transparent 40%)`,
           opacity,
         }}
       />
 
+      {/* Top gradient border effect */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/20 to-transparent" />
+
       <div
         style={{ 
-          transform: "translateZ(50px)",
+          transform: "translateZ(40px)",
           transformStyle: "preserve-3d" 
         }}
         className="relative z-10"

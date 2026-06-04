@@ -48,27 +48,39 @@ const Loader = ({ finishLoading }) => {
     >
       <div className="absolute inset-0 grid-bg opacity-20" />
       
-      <div className="relative mb-12">
+      <div className="relative mb-16">
+        {/* Outer spinning ring */}
         <motion.div 
           animate={{ rotate: 360 }}
-          transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-          className="w-32 h-32 rounded-[2.5rem] border-2 border-accent/20 border-t-accent"
+          transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+          className="w-36 h-36 rounded-full border-2 border-accent/10 border-t-accent"
         />
+        {/* Inner spinning ring - opposite direction */}
+        <motion.div 
+          animate={{ rotate: -360 }}
+          transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+          className="absolute inset-3 rounded-full border border-white/5 border-b-accent/40"
+        />
+        {/* Center content */}
         <div className="absolute inset-0 flex items-center justify-center">
-           <span className="text-xl font-black font-mono">{percent}%</span>
+          <div className="text-center">
+            <span className="text-3xl font-black font-mono bg-linear-to-r from-accent to-violet-400 bg-clip-text text-transparent">{percent}%</span>
+          </div>
         </div>
       </div>
 
-      <div className="flex flex-col items-center gap-4">
-        <h1 className="text-2xl font-black tracking-[0.5em] text-white uppercase italic">
-          KAMRAN_OS
+      <div className="flex flex-col items-center gap-5">
+        <h1 className="text-3xl font-black tracking-[0.6em] text-white uppercase italic">
+          KAMRAN<span className="text-accent">_</span>OS
         </h1>
-        <div className="w-64 h-1 bg-white/5 rounded-full overflow-hidden relative">
+        
+        <div className="w-72 h-0.5 bg-white/5 rounded-full overflow-hidden relative">
           <motion.div 
             style={{ width: `${percent}%` }}
-            className="absolute inset-y-0 left-0 bg-accent"
+            className="absolute inset-y-0 left-0 bg-gradient-to-r from-accent via-violet-400 to-fuchsia-400 rounded-full"
           />
         </div>
+        
         <div className="flex items-center gap-3">
           <div className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
           <span className="text-[10px] font-mono text-muted uppercase tracking-[0.3em]">
@@ -78,12 +90,12 @@ const Loader = ({ finishLoading }) => {
       </div>
 
       <div className="absolute bottom-12 left-12 right-12 flex justify-between items-end">
-        <div className="font-mono text-[8px] text-muted space-y-1">
+        <div className="font-mono text-[8px] text-muted/50 space-y-1">
           <p>CORE: ARMV8-A</p>
           <p>MEMORY: 1024MB</p>
           <p>BUILD: 2025.03.STABLE</p>
         </div>
-        <div className="text-right font-mono text-[8px] text-muted">
+        <div className="text-right font-mono text-[8px] text-muted/50">
            <p>ESTABLISHING_SECURE_CONNECTION...</p>
            <p>LOCAL_HOST: 127.0.0.1</p>
         </div>
