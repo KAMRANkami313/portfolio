@@ -1,38 +1,45 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import SpotlightCard from '../ui/SpotlightCard';
-import { FiTarget, FiZap, FiBox, FiCpu } from 'react-icons/fi';
+import { FiTarget, FiZap, FiBox, FiCpu, FiCoffee, FiMusic } from 'react-icons/fi';
 
 const About = () => {
   const cards = [
     {
       title: "The Mission",
-      content: "Architecting high-performance MERN ecosystems with a focus on real-time data integrity and modular scalability.",
+      content: "Architecting high-performance MERN ecosystems with a focus on real-time data integrity, modular scalability, and developer experience that makes a difference.",
       icon: <FiTarget />,
       className: "md:col-span-2 md:row-span-1",
       tag: "CORE_PURPOSE"
     },
     {
       title: "Education",
-      content: "BS Computer Science at Air University. Specialized in Software Engineering and Database Systems.",
+      content: "BS Computer Science at Air University, Islamabad. Specialized in Software Engineering, Database Systems, and Data Structures with a strong academic foundation.",
       icon: <FiZap />,
       className: "md:col-span-1 md:row-span-1",
       tag: "ACADEMIC_PATH"
     },
     {
       title: "Current Focus",
-      content: "Deep diving into Docker orchestration, Microservices, and Cloud Native deployment strategies.",
+      content: "Deep diving into Docker orchestration, Microservices architecture, and Cloud Native deployment strategies. Exploring system design patterns for distributed applications.",
       icon: <FiBox />,
       className: "md:col-span-1 md:row-span-1",
       tag: "RESEARCH_DEV"
     },
     {
       title: "Core Principles",
-      content: "Scalability First, Clean Architecture, and User-Centric Design. Building software that lasts.",
+      content: "Scalability First, Clean Architecture, and User-Centric Design. Every line of code is written with maintainability, performance, and the end-user in mind.",
       icon: <FiCpu />,
-      className: "md:col-span-2 md:row-span-1",
+      className: "md:col-span-1 md:row-span-1",
       tag: "ENGINEERING_ETHOS"
-    }
+    },
+    {
+      title: "When Not Coding",
+      content: "Exploring new tech trends, contributing to open-source, and brewing the perfect cup of chai while debugging async/await chains at 2 AM.",
+      icon: <FiCoffee />,
+      className: "md:col-span-1 md:row-span-1",
+      tag: "OFF_DUTY_MODE"
+    },
   ];
 
   return (
@@ -75,8 +82,8 @@ const About = () => {
                     </span>
                   </div>
                   <h3 className="text-2xl font-bold mb-4 tracking-tight">{card.title}</h3>
-                  <p className="text-muted leading-relaxed text-sm md:text-base italic">
-                    "{card.content}"
+                  <p className="text-muted leading-relaxed text-sm md:text-base">
+                    {card.content}
                   </p>
                 </div>
                 

@@ -43,7 +43,7 @@ const Skills = () => {
             </div>
           </div>
           <div className="text-right hidden md:block">
-            <span className="text-[10px] font-mono text-muted uppercase tracking-widest">Modules_Loaded: 24</span>
+            <span className="text-[10px] font-mono text-muted uppercase tracking-widest">Modules_Loaded: 20</span>
           </div>
         </div>
 
@@ -88,16 +88,19 @@ const Skills = () => {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                            <div className="w-1.5 h-1.5 rounded-full bg-white/10 group-hover/item:bg-accent transition-colors" />
-                           <span className="text-sm font-bold text-muted group-hover/item:text-white transition-colors">{skill}</span>
+                           <span className="text-sm font-bold text-muted group-hover/item:text-white transition-colors">{skill.name}</span>
                         </div>
-                        <span className="text-[8px] font-black font-mono text-accent/0 group-hover/item:text-accent transition-all uppercase">Optimized</span>
+                        <span className="text-[8px] font-black font-mono text-accent/0 group-hover/item:text-accent transition-all uppercase">
+                          {skill.proficiency}%
+                        </span>
                       </div>
                       <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden mt-1">
                         <motion.div 
                           initial={{ width: 0 }}
-                          whileInView={{ width: "100%" }}
+                          whileInView={{ width: `${skill.proficiency}%` }}
                           transition={{ duration: 1.5, delay: 0.5 + (j * 0.1) }}
-                          className="h-full bg-linear-to-r from-accent/20 to-accent" 
+                          viewport={{ once: true }}
+                          className="h-full bg-linear-to-r from-accent/20 to-accent rounded-full" 
                         />
                       </div>
                     </li>

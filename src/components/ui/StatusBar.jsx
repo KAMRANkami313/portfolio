@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+
+const STATUS_MESSAGES = [
+  "Optimizing_EventPulse_v2",
+  "Refactoring_Socket_Logic",
+  "Monitoring_System_Vitals",
+  "Deploying_Microservices",
+  "Compiling_Portfolio_Assets"
+];
 
 const StatusBar = () => {
   const [statusIndex, setStatusIndex] = useState(0);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
-  const statuses = [
-    "Optimizing_EventPulse_v2",
-    "Refactoring_Socket_Logic",
-    "Monitoring_System_Vitals",
-    "Deploying_Microservices",
-    "Compiling_Portfolio_Assets"
-  ];
-
   useEffect(() => {
     const interval = setInterval(() => {
-      setStatusIndex((prev) => (prev + 1) % statuses.length);
+      setStatusIndex((prev) => (prev + 1) % STATUS_MESSAGES.length);
     }, 4000);
 
     const handleOnline = () => setIsOnline(true);
@@ -28,7 +28,7 @@ const StatusBar = () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
-  }, [statuses.length]);
+  }, []);
 
   return (
     <div className="fixed bottom-6 left-6 z-40 hidden lg:flex items-center gap-4 px-5 py-2.5 bg-surface/60 backdrop-blur-xl border border-white/10 rounded-full shadow-2xl">
@@ -47,7 +47,7 @@ const StatusBar = () => {
           Current_Task:
         </span>
         <span className="text-[10px] font-mono text-white/50 lowercase tracking-tight">
-          {statuses[statusIndex]}...
+          {STATUS_MESSAGES[statusIndex]}...
         </span>
       </div>
     </div>

@@ -1,6 +1,48 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { STATS } from '../../constants';
+
+const AnimatedCounter = ({ value, suffix = "", duration = 2 }) => {
+  const [count, setCount] = useState(0);
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasAnimated) {
+          setHasAnimated(true);
+          const startTime = performance.now();
+          
+          const animate = (currentTime) => {
+            const elapsed = (currentTime - startTime) / 1000;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            // Ease out cubic
+            const eased = 1 - Math.pow(1 - progress, 3);
+            setCount(Math.floor(eased * value));
+            
+            if (progress < 1) {
+              requestAnimationFrame(animate);
+            }
+          };
+          
+          requestAnimationFrame(animate);
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [value, duration, hasAnimated]);
+
+  return (
+    <span ref={ref}>
+      {count}{suffix}
+    </span>
+  );
+};
 
 const Stats = () => {
   return (
@@ -20,7 +62,7 @@ const Stats = () => {
             >
               <div className="relative mb-2">
                 <h4 className="text-4xl md:text-5xl font-black text-white tracking-tighter group-hover:text-accent transition-colors duration-500">
-                  {stat.value}
+                  <AnimatedCounter value={stat.value} suffix={stat.suffix} />
                 </h4>
                 <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-1 bg-accent group-hover:w-full transition-all duration-500" />
               </div>

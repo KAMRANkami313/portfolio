@@ -1,10 +1,45 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { HERO_CONTENT } from "../../constants";
 import Reveal from "../ui/Reveal";
 import ProfileImage from "../ui/ProfileImage";
 import GithubStats from "../ui/GithubStats";
 import { FiDownload, FiGithub, FiLinkedin, FiArrowRight } from "react-icons/fi";
+
+const TypingAnimation = ({ words, typingSpeed = 100, deletingSpeed = 50, pauseDuration = 2000 }) => {
+  const [currentWordIndex, setCurrentWordIndex] = useState(0);
+  const [currentText, setCurrentText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const word = words[currentWordIndex];
+
+    const timeout = setTimeout(() => {
+      if (!isDeleting) {
+        setCurrentText(word.substring(0, currentText.length + 1));
+        if (currentText === word) {
+          setTimeout(() => setIsDeleting(true), pauseDuration);
+          return;
+        }
+      } else {
+        setCurrentText(word.substring(0, currentText.length - 1));
+        if (currentText === "") {
+          setIsDeleting(false);
+          setCurrentWordIndex((prev) => (prev + 1) % words.length);
+        }
+      }
+    }, isDeleting ? deletingSpeed : typingSpeed);
+
+    return () => clearTimeout(timeout);
+  }, [currentText, isDeleting, currentWordIndex, words, typingSpeed, deletingSpeed, pauseDuration]);
+
+  return (
+    <span className="relative">
+      {currentText}
+      <span className="absolute -right-0.5 top-0 bottom-0 w-0.75 bg-accent animate-typing-cursor" />
+    </span>
+  );
+};
 
 const Hero = () => {
   return (
@@ -22,7 +57,7 @@ const Hero = () => {
                    <div className="w-1 h-1 rounded-full bg-accent" />
                 </div>
                 <span className="px-4 py-1.5 rounded-full border border-accent/20 bg-accent/5 text-[10px] font-black uppercase tracking-[0.4em] text-accent">
-                  Status: Available_For_Hire_2025
+                  Status: Available_For_Hire
                 </span>
               </div>
             </Reveal>
@@ -35,14 +70,14 @@ const Hero = () => {
             </Reveal>
 
             <Reveal>
-              <h2 className="text-xl md:text-3xl font-bold text-accent mb-8 uppercase tracking-[0.3em] font-mono">
-                {HERO_CONTENT.role}
+              <h2 className="text-xl md:text-3xl font-bold text-accent mb-8 uppercase tracking-[0.2em] font-mono min-h-10">
+                <TypingAnimation words={HERO_CONTENT.roles} />
               </h2>
             </Reveal>
 
             <Reveal>
-              <p className="text-muted text-lg md:text-xl max-w-xl mb-12 leading-relaxed font-medium italic border-l-2 border-white/5 pl-6">
-                "{HERO_CONTENT.description}"
+              <p className="text-muted text-lg md:text-xl max-w-xl mb-12 leading-relaxed font-medium border-l-2 border-accent/20 pl-6">
+                {HERO_CONTENT.description}
               </p>
             </Reveal>
 
@@ -64,7 +99,7 @@ const Hero = () => {
 
               <a
                 href={HERO_CONTENT.resumeLink}
-                className="flex items-center justify-center gap-3 w-full sm:w-auto px-10 py-5 bg-surface/50 backdrop-blur-md border border-white/10 rounded-2xl font-black uppercase tracking-widest hover:bg-white/5 transition-all"
+                className="flex items-center justify-center gap-3 w-full sm:w-auto px-10 py-5 bg-surface/50 backdrop-blur-md border border-white/10 rounded-2xl font-black uppercase tracking-widest hover:bg-white/5 hover:border-accent/30 transition-all"
               >
                 <FiDownload /> Resume
               </a>

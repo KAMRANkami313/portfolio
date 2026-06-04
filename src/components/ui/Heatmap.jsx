@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
 
 const Heatmap = () => {
-  const squares = Array.from({ length: 64 }, () => Math.floor(Math.random() * 4));
+  // Memoize so it doesn't regenerate on every render
+  const squares = useMemo(() => 
+    Array.from({ length: 64 }, () => Math.floor(Math.random() * 4))
+  , []);
 
   return (
     <div className="mt-10 select-none">

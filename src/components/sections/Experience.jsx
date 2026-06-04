@@ -81,9 +81,20 @@ const Experience = () => {
                       
                       <div className="w-12 h-1 bg-accent/20 rounded-full mb-6 group-hover:w-24 group-hover:bg-accent transition-all duration-500" />
 
-                      <p className="text-muted text-sm md:text-base leading-relaxed italic border-l-2 border-white/5 pl-6 group-hover:border-accent/30 transition-colors">
-                        "{item.description}"
+                      <p className="text-muted text-sm md:text-base leading-relaxed border-l-2 border-white/5 pl-6 group-hover:border-accent/30 transition-colors">
+                        {item.description}
                       </p>
+
+                      {/* Tags */}
+                      {item.tags && (
+                        <div className="flex flex-wrap gap-2 mt-6">
+                          {item.tags.map((tag, i) => (
+                            <span key={i} className="px-2 py-0.5 text-[9px] font-mono font-bold bg-accent/5 text-accent/70 rounded border border-accent/10">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
 
                       <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-between">
                          <span className="text-[9px] font-mono text-muted uppercase tracking-[0.2em]">Deployment_Status: Verified</span>

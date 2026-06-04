@@ -1,23 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useDevMode } from '../../context/DevModeContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Performance = () => {
   const { isDevMode } = useDevMode();
   const [fps, setFps] = useState(0);
+  const [domNodes, setDomNodes] = useState(0);
+  const frameCountRef = useRef(0);
+  const lastTimeRef = useRef(performance.now());
 
   useEffect(() => {
-    let frameCount = 0;
-    let lastTime = performance.now();
     let requestId;
 
     const loop = () => {
-      frameCount++;
+      frameCountRef.current++;
       const now = performance.now();
-      if (now - lastTime >= 1000) {
-        setFps(Math.round((frameCount * 1000) / (now - lastTime)));
-        frameCount = 0;
-        lastTime = now;
+      if (now - lastTimeRef.current >= 1000) {
+        setFps(Math.round((frameCountRef.current * 1000) / (now - lastTimeRef.current)));
+        setDomNodes(document.querySelectorAll('*').length);
+        frameCountRef.current = 0;
+        lastTimeRef.current = now;
       }
       requestId = requestAnimationFrame(loop);
     };
@@ -30,8 +32,8 @@ const Performance = () => {
   }, [isDevMode]);
 
   const stats = [
-    { label: "FPS", val: fps, color: fps > 55 ? "text-green-500" : "text-red-500" },
-    { label: "DOM", val: document.querySelectorAll('*').length, color: "text-blue-500" },
+    { label: "FPS", val: fps, color: fps > 55 ? "text-green-500" : fps > 30 ? "text-yellow-500" : "text-red-500" },
+    { label: "DOM", val: domNodes, color: "text-blue-500" },
     { label: "MEM", val: "LOW", color: "text-green-500" },
     { label: "LOAD", val: "0.8s", color: "text-accent" },
   ];

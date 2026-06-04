@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 
 const Loader = ({ finishLoading }) => {
   const [percent, setPercent] = useState(0);
   const [status, setStatus] = useState("Initializing_Kernel");
+  const finishTimeoutRef = useRef(null);
 
   const statuses = [
     "Loading_Assets",
@@ -22,11 +23,21 @@ const Loader = ({ finishLoading }) => {
       });
     }, 40);
 
-    if (percent === 100) setTimeout(finishLoading, 800);
-    
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
     setStatus(statuses[Math.floor((percent / 100) * (statuses.length - 1))]);
 
-    return () => clearInterval(interval);
+    if (percent === 100) {
+      finishTimeoutRef.current = setTimeout(finishLoading, 800);
+    }
+
+    return () => {
+      if (finishTimeoutRef.current) {
+        clearTimeout(finishTimeoutRef.current);
+      }
+    };
   }, [percent, finishLoading]);
 
   return (

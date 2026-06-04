@@ -1,15 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { CONTACT } from '../../constants';
-import { FiMail, FiArrowUpRight, FiSend, FiGlobe, FiSmile } from 'react-icons/fi';
+import { FiMail, FiArrowUpRight, FiSend, FiGlobe, FiSmile, FiCheck, FiUser, FiMessageCircle } from 'react-icons/fi';
 import SpotlightCard from '../ui/SpotlightCard';
 
 const Contact = () => {
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Build mailto link as fallback since there's no backend
+    const subject = encodeURIComponent(`Portfolio Contact: ${formData.name}`);
+    const body = encodeURIComponent(`From: ${formData.name} (${formData.email})\n\n${formData.message}`);
+    window.location.href = `mailto:${CONTACT.email}?subject=${subject}&body=${body}`;
+    setIsSubmitted(true);
+    setTimeout(() => setIsSubmitted(false), 3000);
+  };
+
+  const handleChange = (e) => {
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
   return (
     <section id="contact" className="py-32 relative overflow-hidden">
       <div className="container mx-auto px-6 relative z-10">
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -23,19 +40,19 @@ const Contact = () => {
               
               <h2 className="text-5xl md:text-8xl font-black tracking-tighter leading-[0.85] uppercase italic mb-8">
                 Initiate<br />
-                <span className="bg-linear-to-r from-accent to-blue-400 bg-clip-text text-transparent">Contact</span>
+                <span className="text-gradient">Contact</span>
               </h2>
               
-              <p className="text-muted text-lg md:text-xl max-w-md leading-relaxed mb-12 italic">
-                "Currently scanning for internship opportunities and high-impact engineering collaborations."
+              <p className="text-muted text-lg md:text-xl max-w-md leading-relaxed mb-12">
+                Currently scanning for internship opportunities and high-impact engineering collaborations. Let's build something remarkable together.
               </p>
 
-              <div className="flex flex-wrap gap-6">
+              <div className="flex flex-wrap gap-4 mb-8">
                 {CONTACT.socials.map((social, index) => (
                   <motion.a
                     key={index}
                     href={social.href}
-                    whileHover={{ scale: 1.1, y: -5 }}
+                    whileHover={{ scale: 1.05, y: -3 }}
                     className="flex items-center gap-3 p-4 bg-surface/40 border border-white/5 rounded-2xl text-muted hover:text-white hover:border-accent/30 transition-all group"
                   >
                     <span className="text-xl group-hover:text-accent transition-colors">{social.icon}</span>
@@ -43,6 +60,18 @@ const Contact = () => {
                   </motion.a>
                 ))}
               </div>
+
+              <a 
+                href={`mailto:${CONTACT.email}`}
+                className="flex items-center gap-3 p-5 bg-surface/40 border border-white/5 rounded-2xl text-muted hover:text-white hover:border-accent/30 transition-all group max-w-sm"
+              >
+                <FiMail className="text-accent text-lg" />
+                <div>
+                  <p className="text-[9px] font-black text-accent uppercase tracking-[0.2em]">Primary_Email</p>
+                  <p className="text-sm font-bold text-white break-all">{CONTACT.email}</p>
+                </div>
+                <FiArrowUpRight className="ml-auto text-lg text-muted group-hover:text-accent group-hover:translate-x-1 group-hover:-translate-y-1 transition-all" />
+              </a>
             </motion.div>
 
             <motion.div
@@ -62,37 +91,88 @@ const Contact = () => {
                   </div>
                 </div>
 
-                <div className="space-y-6">
-                  <a 
-                    href={`mailto:${CONTACT.email}`}
-                    className="block group"
-                  >
-                    <div className="p-6 rounded-4xl bg-black/40 border border-white/5 group-hover:border-accent/50 transition-all duration-500">
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <p className="text-[9px] font-black text-accent uppercase tracking-[0.3em] mb-2">Primary_Email</p>
-                          <p className="text-lg md:text-xl font-bold text-white break-all">{CONTACT.email}</p>
-                        </div>
-                        <FiArrowUpRight className="text-2xl text-muted group-hover:text-accent group-hover:translate-x-1 group-hover:-translate-y-1 transition-all" />
-                      </div>
-                    </div>
-                  </a>
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <div>
+                    <label className="text-[10px] font-black text-accent uppercase tracking-[0.2em] mb-2 block">
+                      <FiUser className="inline mr-2" size={10} />Sender_ID
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      required
+                      placeholder="Your name"
+                      className="w-full p-4 bg-black/40 border border-white/5 rounded-2xl text-white text-sm placeholder:text-white/20 focus:border-accent/50 focus:outline-none transition-colors"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="text-[10px] font-black text-accent uppercase tracking-[0.2em] mb-2 block">
+                      <FiMail className="inline mr-2" size={10} />Return_Address
+                    </label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
+                      placeholder="your@email.com"
+                      className="w-full p-4 bg-black/40 border border-white/5 rounded-2xl text-white text-sm placeholder:text-white/20 focus:border-accent/50 focus:outline-none transition-colors"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="text-[10px] font-black text-accent uppercase tracking-[0.2em] mb-2 block">
+                      <FiMessageCircle className="inline mr-2" size={10} />Payload_Data
+                    </label>
+                    <textarea
+                      name="message"
+                      value={formData.message}
+                      onChange={handleChange}
+                      required
+                      rows={4}
+                      placeholder="Your message..."
+                      className="w-full p-4 bg-black/40 border border-white/5 rounded-2xl text-white text-sm placeholder:text-white/20 focus:border-accent/50 focus:outline-none transition-colors resize-none"
+                    />
+                  </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="p-6 rounded-4xl bg-white/5 border border-white/5 flex flex-col items-center justify-center text-center">
-                      <FiGlobe className="text-accent text-2xl mb-3" />
-                      <span className="text-[9px] font-black text-muted uppercase tracking-widest">Availability</span>
-                      <span className="text-xs font-bold mt-1 uppercase">Remote / PK</span>
-                    </div>
-                    <div className="p-6 rounded-4xl bg-white/5 border border-white/5 flex flex-col items-center justify-center text-center">
-                      <FiSmile className="text-accent text-2xl mb-3" />
-                      <span className="text-[9px] font-black text-muted uppercase tracking-widest">Response</span>
-                      <span className="text-xs font-bold mt-1 uppercase">&lt; 24 Hours</span>
-                    </div>
+                  <motion.button
+                    type="submit"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className={`w-full py-4 rounded-2xl font-black uppercase tracking-widest text-sm transition-all duration-300 flex items-center justify-center gap-3 ${
+                      isSubmitted
+                        ? "bg-green-500 text-white"
+                        : "bg-accent text-white hover:shadow-[0_0_30px_rgba(59,130,246,0.4)]"
+                    }`}
+                  >
+                    {isSubmitted ? (
+                      <>
+                        <FiCheck /> Message_Transmitted
+                      </>
+                    ) : (
+                      <>
+                        <FiSend /> Transmit_Message
+                      </>
+                    )}
+                  </motion.button>
+                </form>
+
+                <div className="mt-8 grid grid-cols-2 gap-4">
+                  <div className="p-4 rounded-2xl bg-white/5 border border-white/5 flex flex-col items-center justify-center text-center">
+                    <FiGlobe className="text-accent text-xl mb-2" />
+                    <span className="text-[9px] font-black text-muted uppercase tracking-widest">Availability</span>
+                    <span className="text-xs font-bold mt-1 uppercase">Remote / PK</span>
+                  </div>
+                  <div className="p-4 rounded-2xl bg-white/5 border border-white/5 flex flex-col items-center justify-center text-center">
+                    <FiSmile className="text-accent text-xl mb-2" />
+                    <span className="text-[9px] font-black text-muted uppercase tracking-widest">Response</span>
+                    <span className="text-xs font-bold mt-1 uppercase">&lt; 24 Hours</span>
                   </div>
                 </div>
 
-                <div className="mt-10 pt-8 border-t border-white/5 flex items-center justify-between">
+                <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-between">
                    <div className="flex gap-2">
                       <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                       <span className="text-[9px] font-mono text-muted uppercase">Ready_To_Sync</span>
@@ -114,7 +194,7 @@ const Contact = () => {
             
             <div className="text-center md:text-right">
               <p className="text-[10px] text-muted uppercase tracking-[0.4em] font-black">
-                © {new Date().getFullYear()} MUHAMMAD KAMRAN. ENGINEERED FOR EXCELLENCE.
+                &copy; {new Date().getFullYear()} MUHAMMAD KAMRAN. ENGINEERED FOR EXCELLENCE.
               </p>
             </div>
           </div>

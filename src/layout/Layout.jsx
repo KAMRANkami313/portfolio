@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Lenis from "lenis";
 import Navbar from "../components/sections/Navbar";
 import { motion, useScroll, useSpring } from "framer-motion";
+import ScrollToTop from "../components/ui/ScrollToTop";
 
 const Layout = ({ children }) => {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -41,35 +42,6 @@ const Layout = ({ children }) => {
     };
   }, []);
 
-  useEffect(() => {
-    const dot = document.createElement("div");
-
-    dot.style.position = "fixed";
-    dot.style.top = "0";
-    dot.style.left = "0";
-    dot.style.width = "8px";
-    dot.style.height = "8px";
-    dot.style.borderRadius = "50%";
-    dot.style.background = "#ffffff";
-    dot.style.pointerEvents = "none";
-    dot.style.zIndex = "9999";
-    dot.style.transform = "translate(-50%, -50%)";
-    dot.style.transition = "transform 0.08s linear";
-
-    document.body.appendChild(dot);
-
-    const move = (e) => {
-      dot.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
-    };
-
-    window.addEventListener("mousemove", move);
-
-    return () => {
-      window.removeEventListener("mousemove", move);
-      dot.remove();
-    };
-  }, []);
-
   return (
     <div className="relative min-h-screen bg-dark text-white antialiased overflow-x-hidden">
       <motion.div
@@ -93,6 +65,7 @@ const Layout = ({ children }) => {
 
       <Navbar />
       <main>{children}</main>
+      <ScrollToTop />
     </div>
   );
 };

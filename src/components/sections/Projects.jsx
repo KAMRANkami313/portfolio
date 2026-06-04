@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PROJECTS } from "../../constants";
-import { FiGithub, FiExternalLink, FiCpu } from "react-icons/fi";
+import { FiGithub, FiExternalLink, FiCpu, FiZap, FiTrendingUp } from "react-icons/fi";
 import SpotlightCard from "../ui/SpotlightCard";
 import { useScramble } from "../../hooks/useScramble";
 import Architecture from "../ui/Architecture";
@@ -77,19 +77,21 @@ const Projects = () => {
                       loading="lazy"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     />
-                    {project.title === "EventPulse" && (
+                    {project.featured && (
                       <div className="absolute top-5 left-5">
-                        <span className="px-3 py-1 bg-accent text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-full shadow-2xl">
-                          Flagship_Build
+                        <span className="px-3 py-1 bg-accent text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-full shadow-2xl flex items-center gap-2">
+                          <FiZap size={10} /> Flagship_Build
                         </span>
                       </div>
                     )}
+                    {/* Hover overlay */}
+                    <div className="absolute inset-0 bg-linear-to-t from-dark/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </div>
 
                   <div className="p-8 grow flex flex-col">
                     <div className="flex justify-between items-start mb-6">
                       <div>
-                        <h3 className="text-3xl font-bold text-white tracking-tight">
+                        <h3 className="text-3xl font-bold text-white tracking-tight group-hover:text-accent transition-colors">
                           {project.title}
                         </h3>
                         <p className="text-accent text-xs font-black mt-2 uppercase tracking-[0.3em] font-mono">
@@ -97,31 +99,44 @@ const Projects = () => {
                         </p>
                       </div>
 
-                      <div className="flex gap-4">
+                      <div className="flex gap-3">
                         <a
                           href={project.github}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="p-3 bg-white/5 rounded-full text-muted hover:text-white hover:bg-accent transition-all"
+                          className="p-3 bg-white/5 rounded-xl text-muted hover:text-white hover:bg-accent transition-all"
                         >
-                          <FiGithub size={20} />
+                          <FiGithub size={18} />
                         </a>
                         <a
                           href={project.live}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="p-3 bg-white/5 rounded-full text-muted hover:text-white hover:bg-accent transition-all"
+                          className="p-3 bg-white/5 rounded-xl text-muted hover:text-white hover:bg-accent transition-all"
                         >
-                          <FiExternalLink size={20} />
+                          <FiExternalLink size={18} />
                         </a>
                       </div>
                     </div>
 
-                    <p className="text-muted leading-relaxed mb-8 text-sm md:text-base">
+                    <p className="text-muted leading-relaxed mb-6 text-sm md:text-base">
                       {project.description}
                     </p>
 
-                    <div className="flex flex-wrap gap-2 mb-10">
+                    {/* Project Metrics */}
+                    {project.metrics && (
+                      <div className="flex gap-4 mb-6">
+                        {project.metrics.map((metric, i) => (
+                          <div key={i} className="flex items-center gap-2 px-3 py-1.5 bg-accent/5 border border-accent/10 rounded-lg">
+                            <FiTrendingUp size={12} className="text-accent" />
+                            <span className="text-[10px] font-mono font-bold text-accent">{metric.label}</span>
+                            <span className="text-[10px] font-mono font-black text-white">{metric.value}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    <div className="flex flex-wrap gap-2 mb-8">
                       {project.tech.map((tag, i) => (
                         <span
                           key={i}
@@ -144,7 +159,7 @@ const Projects = () => {
                              <span className="w-1.5 h-1.5 bg-red-500 rounded-full" />
                              Core_Challenge
                           </p>
-                          <p className="text-xs text-muted leading-relaxed italic border-l-2 border-red-500/20 pl-4">
+                          <p className="text-xs text-muted leading-relaxed border-l-2 border-red-500/20 pl-4">
                             {project.challenge}
                           </p>
                         </div>
@@ -154,13 +169,13 @@ const Projects = () => {
                              <span className="w-1.5 h-1.5 bg-green-500 rounded-full" />
                              Technical_Solution
                           </p>
-                          <p className="text-xs text-muted leading-relaxed italic border-l-2 border-green-500/20 pl-4">
+                          <p className="text-xs text-muted leading-relaxed border-l-2 border-green-500/20 pl-4">
                             {project.solution}
                           </p>
                         </div>
                       </div>
 
-                      {project.title === "EventPulse" && <Architecture />}
+                      {project.featured && <Architecture />}
                     </div>
                   </div>
                 </SpotlightCard>

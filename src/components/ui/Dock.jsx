@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiHome, FiCode, FiUser, FiMail, FiCpu } from 'react-icons/fi';
+import { FiHome, FiCode, FiUser, FiMail, FiCpu, FiMessageSquare } from 'react-icons/fi';
 import { useAudio } from '../../hooks/useAudio';
 
 const Dock = () => {
@@ -12,6 +12,7 @@ const Dock = () => {
     { icon: <FiCpu />, href: "#skills", label: "Skills" },
     { icon: <FiCode />, href: "#projects", label: "Projects" },
     { icon: <FiUser />, href: "#experience", label: "Experience" },
+    { icon: <FiMessageSquare />, href: "#testimonials", label: "Reviews" },
     { icon: <FiMail />, href: "#contact", label: "Contact" },
   ];
 
@@ -21,7 +22,7 @@ const Dock = () => {
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 1, type: "spring", stiffness: 260, damping: 20 }}
-        className="flex items-center gap-3 px-4 py-3 bg-surface/40 backdrop-blur-3xl border border-white/10 rounded-4xl shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
+        className="flex items-center gap-1 sm:gap-3 px-4 py-3 bg-surface/40 backdrop-blur-3xl border border-white/10 rounded-4xl shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
       >
         {items.map((item, i) => (
           <div key={i} className="relative group">
@@ -53,7 +54,7 @@ const Dock = () => {
                 backgroundColor: "rgba(255, 255, 255, 0.1)" 
               }}
               whileTap={{ scale: 0.9 }}
-              className="relative p-4 text-2xl text-muted hover:text-white rounded-2xl transition-colors flex items-center justify-center"
+              className="relative p-3 sm:p-4 text-xl sm:text-2xl text-muted hover:text-white rounded-2xl transition-colors flex items-center justify-center"
             >
               {item.icon}
               {hoveredIndex === i && (
