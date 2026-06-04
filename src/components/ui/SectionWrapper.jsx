@@ -1,15 +1,19 @@
+import React from 'react';
 import { motion } from "framer-motion";
 
-const SectionWrapper = ({ children, id }) => {
+const SectionWrapper = ({ children, id, className = "" }) => {
   return (
     <motion.section
       id={id}
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
       viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
+      transition={{ duration: 1 }}
+      className={`relative py-24 md:py-32 overflow-hidden ${className}`}
     >
-      {children}
+      <div className="container mx-auto px-6 relative z-10">
+        {children}
+      </div>
     </motion.section>
   );
 };

@@ -1,9 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiSearch, FiCommand } from 'react-icons/fi';
+import { FiSearch, FiCommand, FiArrowRight, FiGithub, FiFileText, FiMail, FiLayers } from 'react-icons/fi';
 
 const CommandPalette = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const inputRef = useRef(null);
+
+  const actions = [
+    { id: 'eventpulse', label: 'View EventPulse Source', icon: <FiLayers />, action: () => window.open('https://github.com/KAMRANkami313', '_blank'), category: 'Projects' },
+    { id: 'resume', label: 'Download Resume PDF', icon: <FiFileText />, action: () => window.open('/resume.pdf', '_blank'), category: 'System' },
+    { id: 'contact', label: 'Send Direct Message', icon: <FiMail />, action: () => { setIsOpen(false); window.location.href = '#contact'; }, category: 'Contact' },
+    { id: 'github', label: 'Open GitHub Profile', icon: <FiGithub />, action: () => window.open('https://github.com/KAMRANkami313', '_blank'), category: 'Social' },
+  ];
+
+  const filteredActions = actions.filter(a => 
+    a.label.toLowerCase().includes(query.toLowerCase()) || 
+    a.category.toLowerCase().includes(query.toLowerCase())
+  );
 
   useEffect(() => {
     const down = (e) => {
@@ -11,59 +26,111 @@ const CommandPalette = () => {
         e.preventDefault();
         setIsOpen((open) => !open);
       }
+      if (e.key === 'Escape') setIsOpen(false);
     };
     document.addEventListener('keydown', down);
     return () => document.removeEventListener('keydown', down);
   }, []);
 
+  useEffect(() => {
+    if (isOpen) {
+      setSelectedIndex(0);
+      setQuery("");
+      setTimeout(() => inputRef.current?.focus(), 100);
+    }
+  }, [isOpen]);
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setSelectedIndex((prev) => (prev + 1) % filteredActions.length);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setSelectedIndex((prev) => (prev - 1 + filteredActions.length) % filteredActions.length);
+    } else if (e.key === 'Enter') {
+      filteredActions[selectedIndex]?.action();
+    }
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
         <div 
-          className="fixed inset-0 z-200 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          className="fixed inset-0 z-200 flex items-start justify-center pt-[15vh] px-4 bg-dark/80 backdrop-blur-md"
           onClick={() => setIsOpen(false)}
         >
           <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-xl bg-surface border border-white/10 rounded-2xl shadow-2xl overflow-hidden"
+            className="w-full max-w-2xl bg-surface/90 border border-white/10 rounded-3xl shadow-[0_32px_64px_rgba(0,0,0,0.8)] overflow-hidden backdrop-blur-2xl"
           >
-            <div className="flex items-center gap-3 p-4 border-b border-white/5">
-              <FiSearch className="text-muted" />
+            <div className="flex items-center gap-4 p-6 border-b border-white/5">
+              <FiSearch className="text-accent text-xl" />
               <input 
-                autoFocus
-                placeholder="Search projects, skills, or contact..." 
-                className="bg-transparent border-none outline-none text-white w-full text-sm"
+                ref={inputRef}
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Type a command or search..." 
+                className="bg-transparent border-none outline-none text-white w-full text-lg font-medium placeholder:text-muted"
               />
-              <div className="flex items-center gap-1 px-2 py-1 bg-white/5 rounded text-[10px] text-muted">
+              <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black text-muted uppercase tracking-widest">
                 <FiCommand /> K
               </div>
             </div>
-            <div className="p-2 max-h-80 overflow-y-auto">
-                <p className="p-3 text-[10px] uppercase tracking-widest text-muted font-bold">Quick Actions</p>
-                <button 
-                    onClick={() => window.open('https://github.com/KAMRANkami313', '_blank')}
-                    className="w-full text-left p-3 hover:bg-white/5 rounded-xl text-sm transition-colors flex items-center gap-3"
-                >
-                    <span>📁</span> View EventPulse Source
-                </button>
-                <button 
-                    onClick={() => window.open('/resume.pdf', '_blank')}
-                    className="w-full text-left p-3 hover:bg-white/5 rounded-xl text-sm transition-colors flex items-center gap-3"
-                >
-                    <span>📄</span> Download Resume PDF
-                </button>
-                <button 
-                    onClick={() => {
-                        setIsOpen(false);
-                        window.location.href = '#contact';
-                    }}
-                    className="w-full text-left p-3 hover:bg-white/5 rounded-xl text-sm transition-colors flex items-center gap-3"
-                >
-                    <span>📧</span> Send Message
-                </button>
+
+            <div className="p-3 max-h-[60vh] overflow-y-auto">
+              {filteredActions.length > 0 ? (
+                <div className="space-y-1">
+                  {filteredActions.map((item, index) => (
+                    <button 
+                      key={item.id}
+                      onMouseEnter={() => setSelectedIndex(index)}
+                      onClick={item.action}
+                      className={`w-full text-left p-4 rounded-2xl transition-all duration-200 flex items-center justify-between group ${
+                        selectedIndex === index ? "bg-accent text-white" : "hover:bg-white/5 text-muted"
+                      }`}
+                    >
+                      <div className="flex items-center gap-4">
+                        <span className={`text-xl ${selectedIndex === index ? "text-white" : "text-accent"}`}>
+                          {item.icon}
+                        </span>
+                        <div>
+                          <p className={`text-sm font-bold ${selectedIndex === index ? "text-white" : "text-white"}`}>
+                            {item.label}
+                          </p>
+                          <p className={`text-[10px] uppercase font-black tracking-widest ${selectedIndex === index ? "text-white/70" : "text-muted"}`}>
+                            {item.category}
+                          </p>
+                        </div>
+                      </div>
+                      {selectedIndex === index && (
+                        <motion.div layoutId="arrow">
+                          <FiArrowRight />
+                        </motion.div>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div className="p-12 text-center">
+                  <p className="text-muted text-sm font-mono uppercase tracking-widest">No matching commands found.</p>
+                </div>
+              )}
+            </div>
+
+            <div className="p-4 bg-black/40 border-t border-white/5 flex items-center justify-between px-8">
+              <div className="flex gap-4">
+                <div className="flex items-center gap-1.5 text-[9px] font-black text-muted uppercase tracking-tighter">
+                  <span className="px-1.5 py-0.5 bg-white/5 border border-white/10 rounded">ESC</span> Close
+                </div>
+                <div className="flex items-center gap-1.5 text-[9px] font-black text-muted uppercase tracking-tighter">
+                  <span className="px-1.5 py-0.5 bg-white/5 border border-white/10 rounded">↵</span> Select
+                </div>
+              </div>
+              <p className="text-[9px] font-black text-accent uppercase tracking-[0.3em]">System_Interface_v3</p>
             </div>
           </motion.div>
         </div>

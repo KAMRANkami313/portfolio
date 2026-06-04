@@ -3,65 +3,70 @@ import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 
 const SpotlightCard = ({ children, className = "" }) => {
   const ref = useRef(null);
-
   const [opacity, setOpacity] = useState(0);
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
-  const mouseX = useSpring(x, { stiffness: 500, damping: 50 });
-  const mouseY = useSpring(y, { stiffness: 500, damping: 50 });
+  const springConfig = { stiffness: 150, damping: 20 };
+  const mouseX = useSpring(x, springConfig);
+  const mouseY = useSpring(y, springConfig);
 
-  const rotateX = useTransform(mouseY, [-0.5, 0.5], ["8deg", "-8deg"]);
-  const rotateY = useTransform(mouseX, [-0.5, 0.5], ["-8deg", "8deg"]);
+  const rotateX = useTransform(mouseY, [-0.5, 0.5], ["10deg", "-10deg"]);
+  const rotateY = useTransform(mouseX, [-0.5, 0.5], ["-10deg", "10deg"]);
 
   const handleMouseMove = (e) => {
     if (!ref.current) return;
-
     const rect = ref.current.getBoundingClientRect();
-
-    const width = rect.width;
-    const height = rect.height;
-
+    
     const mouseXPos = e.clientX - rect.left;
     const mouseYPos = e.clientY - rect.top;
 
-    const xPct = mouseXPos / width - 0.5;
-    const yPct = mouseYPos / height - 0.5;
+    const xPct = mouseXPos / rect.width - 0.5;
+    const yPct = mouseYPos / rect.height - 0.5;
 
     x.set(xPct);
     y.set(yPct);
+
+    ref.current.style.setProperty("--mouse-x", `${mouseXPos}px`);
+    ref.current.style.setProperty("--mouse-y", `${mouseYPos}px`);
   };
 
+  const handleMouseEnter = () => setOpacity(1);
+  
   const handleMouseLeave = () => {
+    setOpacity(0);
     x.set(0);
     y.set(0);
-    setOpacity(0);
   };
 
   return (
     <motion.div
       ref={ref}
       onMouseMove={handleMouseMove}
-      onMouseEnter={() => setOpacity(1)}
+      onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       style={{
         rotateX,
         rotateY,
         transformStyle: "preserve-3d",
+        perspective: "1000px"
       }}
-      className={`relative rounded-3xl border border-white/10 bg-surface/50 backdrop-blur-md transition-all duration-300 ${className}`}
+      className={`relative rounded-4xl border border-white/10 bg-surface/40 backdrop-blur-md transition-all duration-500 overflow-hidden ${className}`}
     >
       <div
-        className="pointer-events-none absolute -inset-px transition duration-300"
+        className="pointer-events-none absolute -inset-px transition duration-500 z-30"
         style={{
-          background: `radial-gradient(600px circle at ${x.get()}px ${y.get()}px, rgba(59, 130, 246, 0.12), transparent 40%)`,
+          background: `radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(var(--color-accent-rgb, 59, 130, 246), 0.15), transparent 40%)`,
           opacity,
         }}
       />
 
       <div
-        style={{ transform: "translateZ(60px)" }}
+        style={{ 
+          transform: "translateZ(50px)",
+          transformStyle: "preserve-3d" 
+        }}
         className="relative z-10"
       >
         {children}
