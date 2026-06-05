@@ -77,7 +77,7 @@ const Loader = ({ finishLoading }) => {
         <div className="w-72 h-0.5 bg-white/5 rounded-full overflow-hidden relative">
           <motion.div 
             style={{ width: `${percent}%` }}
-            className="absolute inset-y-0 left-0 bg-gradient-to-r from-accent via-violet-400 to-fuchsia-400 rounded-full"
+            className="absolute inset-y-0 left-0 bg-linear-to-r from-accent via-violet-400 to-fuchsia-400 rounded-full"
           />
         </div>
         

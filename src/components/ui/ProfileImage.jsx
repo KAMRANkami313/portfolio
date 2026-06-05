@@ -15,7 +15,7 @@ const ProfileImage = () => {
       
       {/* Main image container */}
       <div className="relative w-full h-full rounded-[2.5rem] border border-white/10 overflow-hidden backdrop-blur-md p-2 bg-surface/20">
-        <div className="w-full h-full rounded-[2rem] overflow-hidden grayscale hover:grayscale-0 transition-all duration-700 ease-out scale-100 hover:scale-105">
+        <div className="w-full h-full rounded-4xl overflow-hidden grayscale hover:grayscale-0 transition-all duration-700 ease-out scale-100 hover:scale-105">
           <img 
             src={profileImg} 
             alt="Muhammad Kamran" 

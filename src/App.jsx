@@ -21,9 +21,17 @@ import Aura from './components/ui/Aura';
 import CommandPalette from './components/ui/CommandPalette';
 import Performance from './components/ui/Performance';
 import MusicWidget from './components/ui/MusicWidget';
+import AIChatbot from './components/ui/AIChatbot';
+import EasterEgg from './components/ui/EasterEgg';
+import Confetti from './components/ui/Confetti';
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [confettiTrigger, setConfettiTrigger] = useState(0);
+
+  const handleContactSubmit = () => {
+    setConfettiTrigger(prev => prev + 1);
+  };
 
   useEffect(() => {
     console.log(
@@ -49,6 +57,9 @@ const App = () => {
           <Performance />
           <StatusBar />
           <MusicWidget />
+          <AIChatbot />
+          <EasterEgg />
+          <Confetti trigger={confettiTrigger} />
 
           <Hero />
           
@@ -63,7 +74,7 @@ const App = () => {
           <Skills />
           <Experience />
           <Testimonials />
-          <Contact />
+          <Contact onFormSubmit={handleContactSubmit} />
 
           <Dock />
         </Layout>

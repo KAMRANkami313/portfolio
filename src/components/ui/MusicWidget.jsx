@@ -23,7 +23,7 @@ const MusicWidget = () => {
               delay: i * 0.15,
               ease: "easeInOut",
             }}
-            className="w-[2px] bg-accent rounded-full origin-bottom"
+            className="w-0.5 bg-accent rounded-full origin-bottom"
           />
         ))}
       </div>
