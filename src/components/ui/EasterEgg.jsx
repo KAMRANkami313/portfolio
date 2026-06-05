@@ -1,6 +1,7 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiZap, FiStar } from 'react-icons/fi';
+import { useAchievement } from '../../context/AchievementContext';
 
 const KONAMI_CODE = [
   'ArrowUp', 'ArrowUp',
@@ -14,6 +15,8 @@ const EasterEgg = () => {
   const [sequence, setSequence] = useState([]);
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [showHint, setShowHint] = useState(false);
+  const { unlock } = useAchievement();
+  const hasUnlocked = useRef(false);
 
   const handleKeyDown = useCallback((e) => {
     const key = e.key;
@@ -24,20 +27,23 @@ const EasterEgg = () => {
       if (next.length === KONAMI_CODE.length && 
           next.every((k, i) => k === KONAMI_CODE[i])) {
         setIsUnlocked(true);
+        if (!hasUnlocked.current) {
+          hasUnlocked.current = true;
+          unlock('found_easter_egg');
+        }
         setTimeout(() => setIsUnlocked(false), 8000);
         return [];
       }
       
       return next;
     });
-  }, []);
+  }, [unlock]);
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
 
-  // Show hint after 30 seconds on page
   useEffect(() => {
     const timer = setTimeout(() => setShowHint(true), 30000);
     return () => clearTimeout(timer);
@@ -45,7 +51,6 @@ const EasterEgg = () => {
 
   return (
     <>
-      {/* Subtle hint */}
       <AnimatePresence>
         {showHint && !isUnlocked && (
           <motion.div
@@ -56,13 +61,12 @@ const EasterEgg = () => {
             className="fixed bottom-8 left-1/2 -translate-x-1/2 z-40 px-4 py-2 bg-surface/60 backdrop-blur-xl border border-white/5 rounded-full"
           >
             <p className="text-[9px] font-mono text-muted/40 uppercase tracking-[0.3em]">
-              ↑↑↓↓←→←→BA — Try the Konami Code 🥚
+              ↑↑↓↓←→←→BA — Try the Konami Code
             </p>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Unlocked overlay */}
       <AnimatePresence>
         {isUnlocked && (
           <motion.div

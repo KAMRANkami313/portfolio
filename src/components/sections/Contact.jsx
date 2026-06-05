@@ -87,7 +87,7 @@ const Contact = ({ onFormSubmit }) => {
     ${status === 'success' ? 'bg-green-500 text-white'
     : status === 'error'   ? 'bg-red-500/80 text-white'
     : isSending            ? 'bg-accent/50 text-white/70 cursor-not-allowed'
-    : 'bg-accent text-white hover:shadow-[0_0_30px_rgba(59,130,246,0.4)] hover:scale-[1.02] active:scale-[0.98]'}`;
+    : 'bg-accent text-white hover:shadow-[0_0_30px_rgba(var(--color-accent-rgb),0.4)] hover:scale-[1.02] active:scale-[0.98]'}`;
 
   return (
     <section id="contact" className="py-32 relative overflow-hidden">
@@ -95,7 +95,7 @@ const Contact = ({ onFormSubmit }) => {
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
 
-            {/* ── LEFT COLUMN ── */}
+            {/* LEFT COLUMN */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -125,6 +125,7 @@ const Contact = ({ onFormSubmit }) => {
                     rel="noopener noreferrer"
                     whileHover={{ scale: 1.05, y: -3 }}
                     className="flex items-center gap-3 p-4 bg-surface/40 border border-white/5 rounded-2xl text-muted hover:text-white hover:border-accent/30 transition-all group"
+                    aria-label={`Visit ${social.name} profile`}
                   >
                     <span className="text-xl group-hover:text-accent transition-colors">{social.icon}</span>
                     <span className="text-xs font-black uppercase tracking-widest">{social.name}</span>
@@ -148,6 +149,7 @@ const Contact = ({ onFormSubmit }) => {
                       ? 'bg-green-500/10 text-green-400 border border-green-500/20'
                       : 'bg-accent/5 text-accent border border-accent/10 hover:bg-accent/10'
                   }`}
+                  aria-label={copied ? 'Email copied to clipboard' : 'Copy email address'}
                 >
                   {copied
                     ? <><FiCheck size={12} /> Email_Copied</>
@@ -156,7 +158,7 @@ const Contact = ({ onFormSubmit }) => {
               </div>
             </motion.div>
 
-            {/* ── RIGHT COLUMN ── */}
+            {/* RIGHT COLUMN */}
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -165,7 +167,7 @@ const Contact = ({ onFormSubmit }) => {
             >
               <SpotlightCard className="p-10 md:p-12 border-white/5 hover:border-accent/40 transition-all">
                 <div className="flex items-center gap-4 mb-10">
-                  <div className="w-12 h-12 rounded-2xl bg-accent flex items-center justify-center text-white text-xl shadow-[0_0_30px_rgba(59,130,246,0.4)]">
+                  <div className="w-12 h-12 rounded-2xl bg-accent flex items-center justify-center text-white text-xl shadow-[0_0_30px_rgba(var(--color-accent-rgb),0.4)]">
                     <FiSend />
                   </div>
                   <div>
@@ -176,40 +178,45 @@ const Contact = ({ onFormSubmit }) => {
 
                 <form onSubmit={handleSubmit} className="space-y-5" noValidate>
                   <div>
-                    <label className="text-[10px] font-black text-accent uppercase tracking-[0.2em] mb-2 block">
+                    <label htmlFor="contact-name" className="text-[10px] font-black text-accent uppercase tracking-[0.2em] mb-2 block">
                       <FiUser className="inline mr-2" size={10} />Sender_ID
                     </label>
                     <input
+                      id="contact-name"
                       type="text"
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
                       disabled={isSending}
                       placeholder="Your name"
+                      autoComplete="name"
                       className="w-full p-4 bg-black/40 border border-white/5 rounded-2xl text-white text-sm placeholder:text-white/20 focus:border-accent/50 focus:outline-none transition-colors disabled:opacity-50"
                     />
                   </div>
 
                   <div>
-                    <label className="text-[10px] font-black text-accent uppercase tracking-[0.2em] mb-2 block">
+                    <label htmlFor="contact-email" className="text-[10px] font-black text-accent uppercase tracking-[0.2em] mb-2 block">
                       <FiMail className="inline mr-2" size={10} />Return_Address
                     </label>
                     <input
+                      id="contact-email"
                       type="email"
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
                       disabled={isSending}
                       placeholder="your@email.com"
+                      autoComplete="email"
                       className="w-full p-4 bg-black/40 border border-white/5 rounded-2xl text-white text-sm placeholder:text-white/20 focus:border-accent/50 focus:outline-none transition-colors disabled:opacity-50"
                     />
                   </div>
 
                   <div>
-                    <label className="text-[10px] font-black text-accent uppercase tracking-[0.2em] mb-2 block">
+                    <label htmlFor="contact-message" className="text-[10px] font-black text-accent uppercase tracking-[0.2em] mb-2 block">
                       <FiMessageCircle className="inline mr-2" size={10} />Payload_Data
                     </label>
                     <textarea
+                      id="contact-message"
                       name="message"
                       value={formData.message}
                       onChange={handleChange}
@@ -221,7 +228,7 @@ const Contact = ({ onFormSubmit }) => {
                   </div>
 
                   {status === 'error' && errorMsg && (
-                    <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-mono break-all">
+                    <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-mono break-all" role="alert">
                       <FiAlertCircle className="inline mr-2" />
                       {errorMsg}
                     </div>
@@ -232,6 +239,7 @@ const Contact = ({ onFormSubmit }) => {
                     disabled={isSending}
                     onClick={handleButtonClick}
                     className={buttonClass}
+                    aria-label={status === 'success' ? 'Message sent successfully' : status === 'error' ? 'Message failed to send' : 'Send message'}
                   >
                     {buttonLabel()}
                   </button>

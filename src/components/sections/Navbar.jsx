@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiMenu, FiX } from 'react-icons/fi';
+import { FiMenu, FiX, FiAward } from 'react-icons/fi';
 import { NAV_LINKS } from '../../constants';
 import TimeDisplay from '../ui/TimeDisplay';
 import DevToggle from '../ui/DevToggle';
-import ColorPicker from '../ui/ColorPicker';
+import ThemePresets from '../ui/ThemePresets';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -53,7 +53,7 @@ const Navbar = () => {
           : "bg-transparent border-transparent"
       }`}>
         <div className="flex items-center gap-6">
-           <a href="#hero" className="text-xl font-black tracking-tighter bg-linear-to-r from-white to-white/50 bg-clip-text text-transparent hover:from-accent hover:to-accent/60 transition-all">
+           <a href="#hero" className="text-xl font-black tracking-tighter bg-linear-to-r from-white to-white/50 bg-clip-text text-transparent hover:from-accent hover:to-accent/60 transition-all" aria-label="Go to top">
              MK<span className="text-accent">.</span>
            </a>
            
@@ -87,14 +87,14 @@ const Navbar = () => {
 
         <div className="flex items-center gap-3">
           <div className="hidden lg:flex items-center gap-4 pr-4 border-r border-white/10">
-            <ColorPicker />
+            <ThemePresets />
             <DevToggle />
             <TimeDisplay />
           </div>
 
           <a 
             href="#contact" 
-            className="hidden md:block px-5 py-2 text-[11px] bg-accent text-white rounded-full font-black uppercase tracking-widest hover:shadow-[0_0_20px_rgba(var(--color-accent-rgb,99,102,241),0.4)] transition-all duration-300"
+            className="hidden md:block px-5 py-2 text-[11px] bg-accent text-white rounded-full font-black uppercase tracking-widest hover:shadow-[0_0_20px_rgba(var(--color-accent-rgb),0.4)] transition-all duration-300"
           >
             Hire Me
           </a>
@@ -102,6 +102,7 @@ const Navbar = () => {
           <button 
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="lg:hidden p-2 text-white text-xl"
+            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
           >
             {isMobileMenuOpen ? <FiX /> : <FiMenu />}
           </button>
@@ -136,7 +137,7 @@ const Navbar = () => {
               })}
               <div className="w-full h-px bg-white/5 my-1" />
               <div className="flex items-center gap-4">
-                <ColorPicker />
+                <ThemePresets />
                 <DevToggle />
               </div>
               <a 

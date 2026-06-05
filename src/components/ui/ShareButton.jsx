@@ -31,6 +31,7 @@ const ShareButton = () => {
       <button 
         onClick={handleShare}
         className="p-3.5 bg-surface/60 backdrop-blur-xl border border-white/10 rounded-2xl text-muted hover:text-accent hover:border-accent/40 transition-all shadow-2xl group flex items-center gap-3"
+        aria-label="Share this portfolio"
       >
         <FiShare2 className="group-hover:rotate-12 transition-transform" />
         <span className="hidden lg:block text-[9px] font-black uppercase tracking-widest">Share_Node</span>

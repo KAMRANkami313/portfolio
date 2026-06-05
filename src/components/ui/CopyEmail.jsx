@@ -17,6 +17,7 @@ const CopyEmail = () => {
       <button
         onClick={handleCopy}
         className="fixed bottom-24 left-6 z-40 p-3 bg-surface/80 backdrop-blur-md border border-white/10 rounded-full text-muted hover:text-accent transition-all md:flex hidden group"
+        aria-label="Copy email address"
       >
         <FiCopy className="group-hover:scale-110 transition-transform" />
         <span className="absolute left-full ml-4 px-2 py-1 bg-accent text-white text-[10px] font-bold rounded opacity-0 group-hover:opacity-100 whitespace-nowrap transition-opacity">

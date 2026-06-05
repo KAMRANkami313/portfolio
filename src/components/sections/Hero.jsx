@@ -120,8 +120,8 @@ const Hero = () => {
           transition={{ delay: 1.2 }}
           className="flex lg:hidden items-center justify-center gap-10 mt-16"
         >
-          <a href={HERO_CONTENT.githubLink} target="_blank" rel="noopener noreferrer" className="text-2xl text-muted hover:text-accent transition-all"><FiGithub /></a>
-          <a href={HERO_CONTENT.linkedinLink} target="_blank" rel="noopener noreferrer" className="text-2xl text-muted hover:text-accent transition-all"><FiLinkedin /></a>
+          <a href={HERO_CONTENT.githubLink} target="_blank" rel="noopener noreferrer" className="text-2xl text-muted hover:text-accent transition-all" aria-label="GitHub profile"><FiGithub /></a>
+          <a href={HERO_CONTENT.linkedinLink} target="_blank" rel="noopener noreferrer" className="text-2xl text-muted hover:text-accent transition-all" aria-label="LinkedIn profile"><FiLinkedin /></a>
         </motion.div>
       </div>
 

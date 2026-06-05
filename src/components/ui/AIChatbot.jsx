@@ -2,13 +2,14 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiMessageCircle, FiX, FiSend, FiCpu, FiUser } from 'react-icons/fi';
 import { CHATBOT_KNOWLEDGE } from '../../constants';
+import { useAchievement } from '../../context/AchievementContext';
 
 const AIChatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
     {
       role: 'bot',
-      text: "Hey! I'm KAMI_AI, Kamran's portfolio assistant. Ask me about his skills, projects, experience, or anything else! 🚀",
+      text: "Hey! I'm KAMI_AI, Kamran's portfolio assistant. Ask me about his skills, projects, experience, or anything else!",
       time: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
     },
   ]);
@@ -16,6 +17,8 @@ const AIChatbot = () => {
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+  const { unlock } = useAchievement();
+  const hasChatted = useRef(false);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -47,31 +50,31 @@ const AIChatbot = () => {
 
     if (/^(hi|hello|hey|sup|yo|assalam|salam|hola)/i.test(msg)) {
       const greetings = [
-        "Hey there! 👋 Great to see you exploring Kamran's portfolio. What would you like to know?",
+        "Hey there! Great to see you exploring Kamran's portfolio. What would you like to know?",
         "Hello! Welcome aboard! I can tell you about Kamran's skills, projects, or experience. What interests you?",
-        "Hi! I'm KAMI_AI, your guide to everything Kamran. Ask me anything! 🚀",
+        "Hi! I'm KAMI_AI, your guide to everything Kamran. Ask me anything!",
       ];
       return greetings[Math.floor(Math.random() * greetings.length)];
     }
 
     if (/^(thanks|thank you|thx|ty|shukriya)/i.test(msg)) {
-      return "You're welcome! Feel free to ask anything else or reach out to Kamran directly through the contact section! 😊";
+      return "You're welcome! Feel free to ask anything else or reach out to Kamran directly through the contact section!";
     }
 
     if (msg.includes('joke') || msg.includes('funny') || msg.includes('humor')) {
       const jokes = [
-        "Why do programmers prefer dark mode? Because light attracts bugs! 🐛😄",
-        "A SQL query walks into a bar, sees two tables and asks... 'Can I JOIN you?' 🍺",
-        "There are only 10 types of people in the world: those who understand binary and those who don't. 🤓",
-        "Why did the developer go broke? Because he used up all his cache! 💸",
+        "Why do programmers prefer dark mode? Because light attracts bugs!",
+        "A SQL query walks into a bar, sees two tables and asks... 'Can I JOIN you?'",
+        "There are only 10 types of people in the world: those who understand binary and those who don't.",
+        "Why did the developer go broke? Because he used up all his cache!",
       ];
       return jokes[Math.floor(Math.random() * jokes.length)];
     }
 
     const defaults = [
-      "That's an interesting question! I don't have specific info on that, but you can reach out to Kamran directly through the contact section for more details. 📧",
-      "Hmm, I'm not sure about that one. But I can tell you about Kamran's skills, projects, experience, or education! Try asking about those. 🤔",
-      "I don't have data on that yet, but I'm always learning! Meanwhile, feel free to explore the portfolio or ask about Kamran's tech stack. 💡",
+      "That's an interesting question! I don't have specific info on that, but you can reach out to Kamran directly through the contact section for more details.",
+      "Hmm, I'm not sure about that one. But I can tell you about Kamran's skills, projects, experience, or education! Try asking about those.",
+      "I don't have data on that yet, but I'm always learning! Meanwhile, feel free to explore the portfolio or ask about Kamran's tech stack.",
     ];
     return defaults[Math.floor(Math.random() * defaults.length)];
   }, []);
@@ -79,6 +82,11 @@ const AIChatbot = () => {
   const handleSend = useCallback(() => {
     const trimmed = input.trim();
     if (!trimmed) return;
+
+    if (!hasChatted.current) {
+      hasChatted.current = true;
+      unlock('used_chatbot');
+    }
 
     const userMsg = {
       role: 'user',
@@ -101,7 +109,7 @@ const AIChatbot = () => {
       setIsTyping(false);
       setMessages((prev) => [...prev, botMsg]);
     }, delay);
-  }, [input, findResponse]);
+  }, [input, findResponse, unlock]);
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -128,6 +136,11 @@ const AIChatbot = () => {
       setMessages((prev) => [...prev, userMsg]);
       setIsTyping(true);
 
+      if (!hasChatted.current) {
+        hasChatted.current = true;
+        unlock('used_chatbot');
+      }
+
       const delay = 600 + Math.random() * 800;
       setTimeout(() => {
         const response = findResponse(message);
@@ -144,7 +157,6 @@ const AIChatbot = () => {
 
   return (
     <>
-      {/* Floating Chat Button */}
       <AnimatePresence>
         {!isOpen && (
           <motion.button
@@ -154,7 +166,8 @@ const AIChatbot = () => {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={() => setIsOpen(true)}
-            className="fixed bottom-8 right-8 z-50 w-14 h-14 bg-accent rounded-2xl flex items-center justify-center text-white shadow-[0_0_30px_rgba(var(--color-accent-rgb,99,102,241),0.4)] hover:shadow-[0_0_50px_rgba(var(--color-accent-rgb,99,102,241),0.6)] transition-shadow group"
+            className="fixed bottom-8 right-8 z-50 w-14 h-14 bg-accent rounded-2xl flex items-center justify-center text-white shadow-[0_0_30px_rgba(var(--color-accent-rgb),0.4)] hover:shadow-[0_0_50px_rgba(var(--color-accent-rgb),0.6)] transition-shadow group"
+            aria-label="Open AI chatbot"
           >
             <FiMessageCircle className="text-2xl group-hover:scale-110 transition-transform" />
             <span className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-dark animate-pulse" />
@@ -162,7 +175,6 @@ const AIChatbot = () => {
         )}
       </AnimatePresence>
 
-      {/* Chat Window */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -172,7 +184,6 @@ const AIChatbot = () => {
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
             className="fixed bottom-8 right-8 z-50 w-95 max-w-[calc(100vw-2rem)] h-130 max-h-[calc(100vh-4rem)] bg-surface/95 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-[0_25px_60px_rgba(0,0,0,0.7)] flex flex-col overflow-hidden"
           >
-            {/* Header */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-white/5 bg-black/20">
               <div className="flex items-center gap-3">
                 <div className="relative">
@@ -192,12 +203,12 @@ const AIChatbot = () => {
               <button
                 onClick={() => setIsOpen(false)}
                 className="p-2 text-muted hover:text-white hover:bg-white/5 rounded-xl transition-all"
+                aria-label="Close chatbot"
               >
                 <FiX className="text-lg" />
               </button>
             </div>
 
-            {/* Messages */}
             <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4 scrollbar-thin">
               {messages.map((msg, i) => (
                 <motion.div
@@ -254,7 +265,6 @@ const AIChatbot = () => {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Quick Actions */}
             {messages.length <= 2 && (
               <div className="px-4 pb-2">
                 <div className="flex flex-wrap gap-1.5">
@@ -271,7 +281,6 @@ const AIChatbot = () => {
               </div>
             )}
 
-            {/* Input Area */}
             <div className="px-4 py-3 border-t border-white/5 bg-black/20">
               <div className="flex items-center gap-2">
                 <input
@@ -280,6 +289,7 @@ const AIChatbot = () => {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder="Ask me anything..."
+                  aria-label="Chat message input"
                   className="flex-1 bg-white/5 border border-white/5 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/20 focus:border-accent/40 focus:outline-none transition-colors"
                 />
                 <motion.button
@@ -289,9 +299,10 @@ const AIChatbot = () => {
                   disabled={!input.trim()}
                   className={`p-2.5 rounded-xl transition-all ${
                     input.trim()
-                      ? 'bg-accent text-white shadow-[0_0_20px_rgba(var(--color-accent-rgb,99,102,241),0.3)]'
+                      ? 'bg-accent text-white shadow-[0_0_20px_rgba(var(--color-accent-rgb),0.3)]'
                       : 'bg-white/5 text-muted cursor-not-allowed'
                   }`}
+                  aria-label="Send message"
                 >
                   <FiSend className="text-lg" />
                 </motion.button>

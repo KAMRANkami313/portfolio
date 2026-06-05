@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiSearch, FiCommand, FiArrowRight, FiGithub, FiFileText, FiMail, FiLayers } from 'react-icons/fi';
+import { useAchievement } from '../../context/AchievementContext';
 
 const CommandPalette = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef(null);
+  const { unlock } = useAchievement();
 
   const actions = [
     { id: 'eventpulse', label: 'View EventPulse Source', icon: <FiLayers />, action: () => window.open('https://github.com/KAMRANkami313', '_blank'), category: 'Projects' },
@@ -25,12 +27,13 @@ const CommandPalette = () => {
       if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         setIsOpen((open) => !open);
+        unlock('used_command');
       }
       if (e.key === 'Escape') setIsOpen(false);
     };
     document.addEventListener('keydown', down);
     return () => document.removeEventListener('keydown', down);
-  }, []);
+  }, [unlock]);
 
   useEffect(() => {
     if (isOpen) {
@@ -74,6 +77,7 @@ const CommandPalette = () => {
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Type a command or search..." 
+                aria-label="Search commands"
                 className="bg-transparent border-none outline-none text-white w-full text-lg font-medium placeholder:text-muted"
               />
               <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black text-muted uppercase tracking-widest">

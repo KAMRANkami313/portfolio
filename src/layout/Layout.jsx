@@ -4,6 +4,8 @@ import Navbar from "../components/sections/Navbar";
 import { motion, useScroll, useSpring } from "framer-motion";
 import ScrollToTop from "../components/ui/ScrollToTop";
 import Particles from "../components/ui/Particles";
+import Ripple from "../components/ui/Ripple";
+import ClickSparkle from "../components/ui/ClickSparkle";
 
 const Layout = ({ children }) => {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -60,6 +62,9 @@ const Layout = ({ children }) => {
           background: `radial-gradient(600px at ${mousePos.x}px ${mousePos.y}px, rgba(var(--color-accent-rgb, 99, 102, 241), 0.04), transparent 80%)`,
         }}
       />
+
+      <Ripple />
+      <ClickSparkle />
 
       <Navbar />
       <main className="relative z-10">{children}</main>

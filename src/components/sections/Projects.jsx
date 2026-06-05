@@ -105,6 +105,7 @@ const Projects = () => {
                           target="_blank"
                           rel="noopener noreferrer"
                           className="p-3 bg-white/5 rounded-xl text-muted hover:text-white hover:bg-accent transition-all"
+                          aria-label={`View ${project.title} source code on GitHub`}
                         >
                           <FiGithub size={18} />
                         </a>
@@ -113,6 +114,7 @@ const Projects = () => {
                           target="_blank"
                           rel="noopener noreferrer"
                           className="p-3 bg-white/5 rounded-xl text-muted hover:text-white hover:bg-accent transition-all"
+                          aria-label={`View ${project.title} live demo`}
                         >
                           <FiExternalLink size={18} />
                         </a>
