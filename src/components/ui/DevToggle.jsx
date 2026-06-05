@@ -14,6 +14,8 @@ const DevToggle = () => {
   return (
     <button 
       onClick={handleToggle}
+      aria-label={`Toggle debug mode ${isDevMode ? 'off' : 'on'}`}
+      aria-pressed={isDevMode}
       className={`relative group flex items-center gap-3 px-4 py-1.5 rounded-full border transition-all duration-300 ${
         isDevMode 
           ? "bg-accent/10 border-accent text-accent shadow-[0_0_15px_rgba(59,130,246,0.3)]" 

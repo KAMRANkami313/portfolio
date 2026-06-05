@@ -61,6 +61,9 @@ const CommandPalette = () => {
         <div 
           className="fixed inset-0 z-200 flex items-start justify-center pt-[15vh] px-4 bg-dark/80 backdrop-blur-md"
           onClick={() => setIsOpen(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Command palette"
         >
           <motion.div 
             initial={{ opacity: 0, y: -20, scale: 0.95 }}

@@ -43,6 +43,8 @@ const Projects = () => {
               <button
                 key={cat}
                 onClick={() => setFilter(cat)}
+                aria-label={`Filter by ${cat}`}
+                aria-pressed={filter === cat}
                 className={`px-5 py-2 rounded-xl text-xs font-bold transition-all duration-300 ${
                   filter === cat
                     ? "bg-accent text-white shadow-lg shadow-accent/20"

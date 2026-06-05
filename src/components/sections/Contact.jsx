@@ -223,6 +223,7 @@ const Contact = ({ onFormSubmit }) => {
                       disabled={isSending}
                       rows={4}
                       placeholder="Your message..."
+                      autoComplete="off"
                       className="w-full p-4 bg-black/40 border border-white/5 rounded-2xl text-white text-sm placeholder:text-white/20 focus:border-accent/50 focus:outline-none transition-colors resize-none disabled:opacity-50"
                     />
                   </div>

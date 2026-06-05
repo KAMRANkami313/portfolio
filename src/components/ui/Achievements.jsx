@@ -15,6 +15,9 @@ const Achievements = ({ isOpen, onClose }) => {
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-200 flex items-center justify-center bg-dark/80 backdrop-blur-md"
           onClick={onClose}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Achievements"
         >
           <motion.div
             initial={{ scale: 0.95, opacity: 0 }}

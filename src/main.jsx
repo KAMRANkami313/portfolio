@@ -6,6 +6,7 @@ import { ThemeProvider } from './context/ThemeContext'
 import { DevModeProvider } from './context/DevModeContext'
 import { ToastProvider } from './context/ToastContext'
 import { AchievementProvider } from './context/AchievementContext'
+import { Analytics } from '@vercel/analytics/react'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -18,5 +19,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         </ToastProvider>
       </AchievementProvider>
     </ThemeProvider>
+    <Analytics />
   </React.StrictMode>,
 )

@@ -1,18 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import Layout from './layout/Layout';
 import Loader from './components/ui/Loader';
 import Cursor from './components/ui/Cursor';
 import Hero from './components/sections/Hero';
-import About from './components/sections/About';
-import Terminal from './components/ui/Terminal';
-import TechMarquee from './components/ui/TechMarquee';
-import Stats from './components/ui/Stats';
-import Projects from './components/sections/Projects';
-import Skills from './components/sections/Skills';
-import Experience from './components/sections/Experience';
-import Testimonials from './components/sections/Testimonials';
-import Contact from './components/sections/Contact';
+import SectionDivider from './components/ui/SectionDivider';
 import StatusBar from './components/ui/StatusBar';
 import CopyEmail from './components/ui/CopyEmail';
 import Dock from './components/ui/Dock';
@@ -26,11 +18,21 @@ import EasterEgg from './components/ui/EasterEgg';
 import Confetti from './components/ui/Confetti';
 import Ripple from './components/ui/Ripple';
 import ClickSparkle from './components/ui/ClickSparkle';
-import SectionDivider from './components/ui/SectionDivider';
 import VisitorCounter from './components/ui/VisitorCounter';
 import Achievements from './components/ui/Achievements';
 import { useAchievement } from './context/AchievementContext';
 import { useToast } from './context/ToastContext';
+
+// Lazy-loaded sections (below the fold)
+const About = lazy(() => import('./components/sections/About'));
+const Terminal = lazy(() => import('./components/ui/Terminal'));
+const TechMarquee = lazy(() => import('./components/ui/TechMarquee'));
+const Stats = lazy(() => import('./components/ui/Stats'));
+const Projects = lazy(() => import('./components/sections/Projects'));
+const Skills = lazy(() => import('./components/sections/Skills'));
+const Experience = lazy(() => import('./components/sections/Experience'));
+const Testimonials = lazy(() => import('./components/sections/Testimonials'));
+const Contact = lazy(() => import('./components/sections/Contact'));
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -124,32 +126,44 @@ const App = () => {
 
           <SectionDivider variant="wave" />
 
-          <div className="container mx-auto px-6 mb-24">
-            <Terminal />
-          </div>
+          <Suspense fallback={<div className="h-40" />}>
+            <div className="container mx-auto px-6 mb-24">
+              <Terminal />
+            </div>
+          </Suspense>
 
           <SectionDivider variant="dots" />
 
-          <About />
-          <Stats />
+          <Suspense fallback={<div className="h-40" />}>
+            <About />
+            <Stats />
+          </Suspense>
 
           <SectionDivider variant="line" />
 
-          <TechMarquee />
-          <Projects />
+          <Suspense fallback={<div className="h-40" />}>
+            <TechMarquee />
+            <Projects />
+          </Suspense>
 
           <SectionDivider variant="wave" />
 
-          <Skills />
+          <Suspense fallback={<div className="h-40" />}>
+            <Skills />
+          </Suspense>
 
           <SectionDivider variant="dots" />
 
-          <Experience />
+          <Suspense fallback={<div className="h-40" />}>
+            <Experience />
+          </Suspense>
 
           <SectionDivider variant="line" />
 
-          <Testimonials />
-          <Contact onFormSubmit={handleContactSubmit} />
+          <Suspense fallback={<div className="h-40" />}>
+            <Testimonials />
+            <Contact onFormSubmit={handleContactSubmit} />
+          </Suspense>
 
           <Dock onAchievementsClick={() => setShowAchievements(true)} />
         </Layout>
