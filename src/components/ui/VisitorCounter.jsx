@@ -19,7 +19,7 @@ const VisitorCounter = () => {
   }, []);
 
   return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 hidden lg:flex items-center gap-3 px-4 py-2 bg-surface/40 backdrop-blur-xl border border-white/5 rounded-full shadow-lg animate-fade-in-up-delayed">
+    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 hidden lg:flex items-center gap-3 px-4 py-2 bg-surface/40 backdrop-blur-xl border border-white/5 rounded-full shadow-lg opacity-0 animate-fade-in-up-delayed">
       <FiEye className="text-accent/60 text-xs" />
       <span className="text-[9px] font-mono text-muted uppercase tracking-widest">
         Visitors:

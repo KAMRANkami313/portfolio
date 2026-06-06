@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { FiCopy, FiCheck } from 'react-icons/fi';
 import { CONTACT } from '../../constants';
 
@@ -25,19 +24,16 @@ const CopyEmail = () => {
         </span>
       </button>
 
-      <AnimatePresence>
-        {copied && (
-          <motion.div
-            initial={{ opacity: 0, y: 20, x: "-50%" }}
-            animate={{ opacity: 1, y: 0, x: "-50%" }}
-            exit={{ opacity: 0, y: 20, x: "-50%" }}
-            className="fixed bottom-10 left-1/2 z-100 px-6 py-3 bg-accent text-white rounded-2xl shadow-2xl flex items-center gap-3 font-bold text-sm"
-          >
-            <FiCheck />
-            <span>Email Copied to Clipboard!</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <div
+        className={`fixed bottom-10 left-1/2 -translate-x-1/2 z-100 px-6 py-3 bg-accent text-white rounded-2xl shadow-2xl flex items-center gap-3 font-bold text-sm transition-all duration-300 will-animate ${
+          copied
+            ? 'opacity-100 translate-y-0 scale-100'
+            : 'opacity-0 translate-y-5 scale-95 pointer-events-none'
+        }`}
+      >
+        <FiCheck />
+        <span>Email Copied to Clipboard!</span>
+      </div>
     </>
   );
 };

@@ -1,19 +1,13 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 
 const Cursor = () => {
   const dotRef = useRef(null);
-  const trailRefs = useRef([]);
-  const [isHovering, setIsHovering] = useState(false);
-  const [isClicking, setIsClicking] = useState(false);
   const posRef = useRef({ x: -100, y: -100 });
   const targetRef = useRef({ x: -100, y: -100 });
+  const [isHovering, setIsHovering] = useState(false);
+  const [isClicking, setIsClicking] = useState(false);
+  const rafRef = useRef(null);
 
-  // Trail positions for the glow trail effect
-  const trailPositions = useRef(
-    Array.from({ length: 5 }, () => ({ x: -100, y: -100 }))
-  );
-
-  // Track real cursor position (the system cursor moves instantly)
   useEffect(() => {
     const handleMouseMove = (e) => {
       targetRef.current = { x: e.clientX, y: e.clientY };
@@ -22,7 +16,7 @@ const Cursor = () => {
     const handleMouseDown = () => setIsClicking(true);
     const handleMouseUp = () => setIsClicking(false);
 
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
     window.addEventListener('mousedown', handleMouseDown);
     window.addEventListener('mouseup', handleMouseUp);
 
@@ -33,93 +27,61 @@ const Cursor = () => {
     };
   }, []);
 
-  // Smooth following animation with trailing glow
+  // Smooth following — uses transform only (GPU composited, no reflow)
   useEffect(() => {
-    let animationId;
-    const ease = 0.12; // Lower = slower follow
+    const ease = 0.15;
 
     const animate = () => {
       posRef.current.x += (targetRef.current.x - posRef.current.x) * ease;
       posRef.current.y += (targetRef.current.y - posRef.current.y) * ease;
 
       if (dotRef.current) {
-        dotRef.current.style.transform = `translate(${posRef.current.x - 4}px, ${posRef.current.y - 4}px)`;
+        dotRef.current.style.transform = `translate3d(${posRef.current.x}px, ${posRef.current.y}px, 0)`;
       }
 
-      // Update trail positions — each trail point follows the previous one
-      trailPositions.current.forEach((trail, i) => {
-        const target = i === 0 ? posRef.current : trailPositions.current[i - 1];
-        const trailEase = 0.08 - i * 0.01; // Each trail point is slower
-        trail.x += (target.x - trail.x) * Math.max(trailEase, 0.03);
-        trail.y += (target.y - trail.y) * Math.max(trailEase, 0.03);
-
-        if (trailRefs.current[i]) {
-          const size = 6 - i; // Trail gets smaller
-          trailRefs.current[i].style.transform = `translate(${trail.x - size / 2}px, ${trail.y - size / 2}px)`;
-        }
-      });
-
-      animationId = requestAnimationFrame(animate);
+      rafRef.current = requestAnimationFrame(animate);
     };
 
-    animationId = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animationId);
+    rafRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(rafRef.current);
   }, []);
 
-  // Detect hover on interactive elements
+  // Detect hover on interactive elements (debounced)
   useEffect(() => {
-    const handleHover = () => setIsHovering(true);
-    const handleUnhover = () => setIsHovering(false);
+    let mounted = true;
 
     const attachListeners = () => {
+      if (!mounted) return;
       document.querySelectorAll('a, button, [role="button"], input, textarea, select').forEach(el => {
-        el.addEventListener('mouseenter', handleHover);
-        el.addEventListener('mouseleave', handleUnhover);
+        el.addEventListener('mouseenter', () => mounted && setIsHovering(true));
+        el.addEventListener('mouseleave', () => mounted && setIsHovering(false));
       });
     };
 
     attachListeners();
-    const interval = setInterval(attachListeners, 3000);
+    const interval = setInterval(attachListeners, 5000);
 
     return () => {
+      mounted = false;
       clearInterval(interval);
-      document.querySelectorAll('a, button, [role="button"], input, textarea, select').forEach(el => {
-        el.removeEventListener('mouseenter', handleHover);
-        el.removeEventListener('mouseleave', handleUnhover);
-      });
     };
   }, []);
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-9999 hidden md:block">
-      {/* Trailing glow dots */}
-      {trailPositions.current.map((_, i) => (
-        <div
-          key={i}
-          ref={(el) => (trailRefs.current[i] = el)}
-          className="fixed top-0 left-0 rounded-full pointer-events-none"
-          style={{
-            width: 6 - i,
-            height: 6 - i,
-            backgroundColor: 'var(--color-accent)',
-            opacity: 0.15 - i * 0.025,
-            filter: `blur(${1 + i}px)`,
-            willChange: 'transform',
-          }}
-        />
-      ))}
-
-      {/* Main cursor dot */}
+    <div className="pointer-events-none fixed top-0 left-0 z-9999 hidden md:block">
       <div
         ref={dotRef}
-        className={`fixed top-0 left-0 pointer-events-none transition-[width,height,background-color,border-radius] duration-300 ease-out ${
-          isHovering
-            ? "w-10 h-10 bg-accent/10 border border-accent/40 rounded-full"
-            : isClicking
-            ? "w-3 h-3 bg-accent rounded-full"
-            : "w-2 h-2 bg-accent/80 rounded-full"
-        }`}
-        style={{ willChange: 'transform' }}
+        className="fixed top-0 left-0 pointer-events-none will-animate"
+        style={{
+          width: isHovering ? 40 : isClicking ? 12 : 8,
+          height: isHovering ? 40 : isClicking ? 12 : 8,
+          backgroundColor: isHovering ? 'rgba(99, 102, 241, 0.1)' : isClicking ? 'var(--color-accent)' : 'rgba(99, 102, 241, 0.8)',
+          border: isHovering ? '1px solid rgba(99, 102, 241, 0.4)' : 'none',
+          borderRadius: '50%',
+          marginLeft: isHovering ? -20 : isClicking ? -6 : -4,
+          marginTop: isHovering ? -20 : isClicking ? -6 : -4,
+          transition: 'width 0.3s, height 0.3s, background-color 0.3s, border 0.3s, margin 0.3s',
+        }}
       />
     </div>
   );

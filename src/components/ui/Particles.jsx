@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 
-const PARTICLE_COUNT = 50;
-const CONNECTION_DISTANCE = 120;
+const PARTICLE_COUNT = 35;
+const CONNECTION_DISTANCE = 100;
 
 const Particles = () => {
   const canvasRef = useRef(null);
@@ -25,6 +25,8 @@ const Particles = () => {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
+    let accentColor = { r: 99, g: 102, b: 241 };
+
     const resize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -39,23 +41,28 @@ const Particles = () => {
     const handleMouseMove = (e) => {
       mouseRef.current = { x: e.clientX, y: e.clientY };
     };
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
 
-    const getAccentColor = () => {
-      const accentHex = getComputedStyle(document.documentElement).getPropertyValue('--color-accent').trim() || '#6366f1';
-      const hex = accentHex.replace('#', '');
-      const r = parseInt(hex.substring(0, 2), 16);
-      const g = parseInt(hex.substring(2, 4), 16);
-      const b = parseInt(hex.substring(4, 6), 16);
-      return { r, g, b };
-    };
+    // Cache accent color — only read once
+    try {
+      const hex = (getComputedStyle(document.documentElement).getPropertyValue('--color-accent').trim() || '#6366f1').replace('#', '');
+      accentColor = {
+        r: parseInt(hex.substring(0, 2), 16),
+        g: parseInt(hex.substring(2, 4), 16),
+        b: parseInt(hex.substring(4, 6), 16),
+      };
+    } catch {}
+
+    const { r, g, b } = accentColor;
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const { r, g, b } = getAccentColor();
       const particles = particlesRef.current;
+      const mx = mouseRef.current.x;
+      const my = mouseRef.current.y;
 
-      particles.forEach((p) => {
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
         p.x += p.vx;
         p.y += p.vy;
 
@@ -63,8 +70,8 @@ const Particles = () => {
         if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
 
         // Mouse repulsion
-        const dx = p.x - mouseRef.current.x;
-        const dy = p.y - mouseRef.current.y;
+        const dx = p.x - mx;
+        const dy = p.y - my;
         const dist = Math.sqrt(dx * dx + dy * dy);
         if (dist < 150) {
           const force = (150 - dist) / 150;
@@ -75,24 +82,26 @@ const Particles = () => {
         // Speed limit
         const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
         if (speed > 1) {
-          p.vx = (p.vx / speed) * 1;
-          p.vy = (p.vy / speed) * 1;
+          p.vx = (p.vx / speed);
+          p.vy = (p.vy / speed);
         }
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${p.opacity})`;
         ctx.fill();
-      });
+      }
 
-      // Draw connections
+      // Draw connections — only check nearby particles
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
           const dy = particles[i].y - particles[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
+          const distSq = dx * dx + dy * dy;
+          const maxDistSq = CONNECTION_DISTANCE * CONNECTION_DISTANCE;
 
-          if (dist < CONNECTION_DISTANCE) {
+          if (distSq < maxDistSq) {
+            const dist = Math.sqrt(distSq);
             const opacity = (1 - dist / CONNECTION_DISTANCE) * 0.12;
             ctx.beginPath();
             ctx.moveTo(particles[i].x, particles[i].y);
@@ -107,7 +116,7 @@ const Particles = () => {
       animationRef.current = requestAnimationFrame(animate);
     };
 
-    animate();
+    animationRef.current = requestAnimationFrame(animate);
 
     return () => {
       window.removeEventListener('resize', resize);

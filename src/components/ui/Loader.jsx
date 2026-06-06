@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 const Loader = ({ finishLoading }) => {
   const [percent, setPercent] = useState(0);
   const [status, setStatus] = useState("Initializing_Kernel");
+  const [isExiting, setIsExiting] = useState(false);
   const finishTimeoutRef = useRef(null);
 
   const statuses = [
@@ -29,7 +30,10 @@ const Loader = ({ finishLoading }) => {
     setStatus(statuses[Math.floor((percent / 100) * (statuses.length - 1))]);
 
     if (percent === 100) {
-      finishTimeoutRef.current = setTimeout(finishLoading, 800);
+      finishTimeoutRef.current = setTimeout(() => {
+        setIsExiting(true);
+        setTimeout(finishLoading, 800);
+      }, 800);
     }
 
     return () => {
@@ -40,14 +44,18 @@ const Loader = ({ finishLoading }) => {
   }, [percent, finishLoading]);
 
   return (
-    <div className="fixed inset-0 z-200 flex flex-col items-center justify-center bg-dark animate-exit-up">
+    <div
+      className={`fixed inset-0 z-200 flex flex-col items-center justify-center bg-dark ${
+        isExiting ? 'animate-loader-exit' : ''
+      }`}
+    >
       <div className="absolute inset-0 grid-bg opacity-20" />
 
       <div className="relative mb-16">
         {/* Outer spinning ring */}
-        <div className="w-36 h-36 rounded-full border-2 border-accent/10 border-t-accent animate-spin-slow" />
+        <div className="w-36 h-36 rounded-full border-2 border-accent/10 border-t-accent animate-loader-spin will-animate" />
         {/* Inner spinning ring - opposite direction */}
-        <div className="absolute inset-3 rounded-full border border-white/5 border-b-accent/40 animate-spin-reverse" />
+        <div className="absolute inset-3 rounded-full border border-white/5 border-b-accent/40 animate-loader-spin-reverse will-animate" />
         {/* Center content */}
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center">
@@ -63,8 +71,8 @@ const Loader = ({ finishLoading }) => {
 
         <div className="w-72 h-0.5 bg-white/5 rounded-full overflow-hidden relative">
           <div
+            className="absolute inset-y-0 left-0 bg-linear-to-r from-accent via-violet-400 to-fuchsia-400 rounded-full transition-all duration-100"
             style={{ width: `${percent}%` }}
-            className="absolute inset-y-0 left-0 bg-linear-to-r from-accent via-violet-400 to-fuchsia-400 rounded-full transition-[width] duration-100"
           />
         </div>
 

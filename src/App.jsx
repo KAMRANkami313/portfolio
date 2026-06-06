@@ -1,14 +1,12 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
-import { AnimatePresence } from 'framer-motion';
 import Layout from './layout/Layout';
 import Hero from './components/sections/Hero';
 import SectionDivider from './components/ui/SectionDivider';
 import StatusBar from './components/ui/StatusBar';
-import Dock from './components/ui/Dock';
 import { useAchievement } from './context/AchievementContext';
 import { useToast } from './context/ToastContext';
 
-// Lazy-loaded UI components (not needed on initial render)
+// Lazy-loaded UI components
 const Loader = lazy(() => import('./components/ui/Loader'));
 const Aura = lazy(() => import('./components/ui/Aura'));
 const Cursor = lazy(() => import('./components/ui/Cursor'));
@@ -22,6 +20,7 @@ const CopyEmail = lazy(() => import('./components/ui/CopyEmail'));
 const ShareButton = lazy(() => import('./components/ui/ShareButton'));
 const VisitorCounter = lazy(() => import('./components/ui/VisitorCounter'));
 const Achievements = lazy(() => import('./components/ui/Achievements'));
+const Dock = lazy(() => import('./components/ui/Dock'));
 
 // Lazy-loaded sections (below the fold)
 const About = lazy(() => import('./components/sections/About'));
@@ -69,7 +68,7 @@ const App = () => {
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -101,27 +100,61 @@ const App = () => {
 
   return (
     <>
-      <AnimatePresence mode="wait">
-        {isLoading && (
-          <Suspense fallback={null}>
-            <Loader finishLoading={() => setIsLoading(false)} />
-          </Suspense>
-        )}
-      </AnimatePresence>
+      {isLoading && (
+        <Suspense fallback={
+          <div className="fixed inset-0 z-200 flex items-center justify-center bg-dark">
+            <div className="text-accent font-mono text-sm">Loading...</div>
+          </div>
+        }>
+          <Loader finishLoading={() => setIsLoading(false)} />
+        </Suspense>
+      )}
 
       {!isLoading && (
         <Layout>
           <Suspense fallback={null}>
             <Aura />
+          </Suspense>
+
+          <Suspense fallback={null}>
             <CommandPalette />
+          </Suspense>
+
+          <Suspense fallback={null}>
             <Cursor />
+          </Suspense>
+
+          <Suspense fallback={null}>
             <CopyEmail />
+          </Suspense>
+
+          <Suspense fallback={null}>
             <ShareButton />
+          </Suspense>
+
+          <Suspense fallback={null}>
             <Performance />
+          </Suspense>
+
+          <StatusBar />
+
+          <Suspense fallback={null}>
             <MusicWidget />
+          </Suspense>
+
+          <Suspense fallback={null}>
             <AIChatbot />
+          </Suspense>
+
+          <Suspense fallback={null}>
             <EasterEgg />
+          </Suspense>
+
+          <Suspense fallback={null}>
             <Confetti trigger={confettiTrigger} />
+          </Suspense>
+
+          <Suspense fallback={null}>
             <VisitorCounter />
           </Suspense>
 
@@ -168,7 +201,9 @@ const App = () => {
             <Contact onFormSubmit={handleContactSubmit} />
           </Suspense>
 
-          <Dock onAchievementsClick={() => setShowAchievements(true)} />
+          <Suspense fallback={null}>
+            <Dock onAchievementsClick={() => setShowAchievements(true)} />
+          </Suspense>
         </Layout>
       )}
 

@@ -6,7 +6,6 @@ import { ThemeProvider } from './context/ThemeContext'
 import { DevModeProvider } from './context/DevModeContext'
 import { ToastProvider } from './context/ToastContext'
 import { AchievementProvider } from './context/AchievementContext'
-import { Analytics } from '@vercel/analytics/react'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -19,6 +18,12 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         </ToastProvider>
       </AchievementProvider>
     </ThemeProvider>
-    <Analytics />
   </React.StrictMode>,
 )
+
+// Load Vercel Analytics only in production (prevents script.js 404 on localhost)
+if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+  import('@vercel/analytics').then(({ inject }) => {
+    inject();
+  }).catch(() => {});
+}

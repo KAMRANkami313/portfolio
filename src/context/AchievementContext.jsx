@@ -1,5 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { FiAward, FiX } from 'react-icons/fi';
 
 const AchievementContext = createContext();
@@ -28,6 +27,8 @@ export const AchievementProvider = ({ children }) => {
 
   const [popup, setPopup] = useState(null);
   const [popupQueue, setPopupQueue] = useState([]);
+  const [isExiting, setIsExiting] = useState(false);
+  const popupTimerRef = useRef(null);
 
   useEffect(() => {
     localStorage.setItem('kamran-achievements', JSON.stringify(unlocked));
@@ -35,8 +36,17 @@ export const AchievementProvider = ({ children }) => {
 
   useEffect(() => {
     if (popup) {
-      const timer = setTimeout(() => setPopup(null), 4000);
-      return () => clearTimeout(timer);
+      setIsExiting(false);
+      popupTimerRef.current = setTimeout(() => {
+        setIsExiting(true);
+        setTimeout(() => {
+          setPopup(null);
+          setIsExiting(false);
+        }, 400);
+      }, 4000);
+      return () => {
+        if (popupTimerRef.current) clearTimeout(popupTimerRef.current);
+      };
     }
   }, [popup]);
 
@@ -65,37 +75,43 @@ export const AchievementProvider = ({ children }) => {
   const total = Object.keys(ACHIEVEMENT_DEFS).length;
   const count = Object.keys(unlocked).length;
 
+  const dismissPopup = useCallback(() => {
+    setIsExiting(true);
+    setTimeout(() => {
+      setPopup(null);
+      setIsExiting(false);
+    }, 400);
+    if (popupTimerRef.current) clearTimeout(popupTimerRef.current);
+  }, []);
+
   return (
     <AchievementContext.Provider value={{ unlock, isUnlocked, unlocked, total, count, defs: ACHIEVEMENT_DEFS }}>
       {children}
-      <AnimatePresence>
-        {popup && (
-          <motion.div
-            initial={{ y: -80, opacity: 0, scale: 0.9 }}
-            animate={{ y: 0, opacity: 1, scale: 1 }}
-            exit={{ y: -80, opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed top-6 left-1/2 -translate-x-1/2 z-1000 flex items-center gap-4 px-6 py-4 bg-surface/95 backdrop-blur-2xl border border-accent/20 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
-          >
-            <div className="text-3xl animate-badge-pop">{popup.icon}</div>
-            <div className="flex flex-col">
-              <div className="flex items-center gap-2">
-                <FiAward className="text-accent text-xs" />
-                <span className="text-[9px] font-black text-accent uppercase tracking-[0.3em]">Achievement_Unlocked</span>
-              </div>
-              <p className="text-sm font-bold text-white mt-0.5">{popup.title}</p>
-              <p className="text-[11px] text-white/50">{popup.desc}</p>
+      {popup && (
+        <div
+          className={`fixed top-6 left-1/2 -translate-x-1/2 z-1000 flex items-center gap-4 px-6 py-4 bg-surface/95 backdrop-blur-2xl border border-accent/20 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.5)] will-animate ${
+            isExiting ? 'opacity-0 -translate-y-5 scale-95' : 'animate-achievement-in'
+          }`}
+          style={{ transition: isExiting ? 'all 0.3s ease-in' : undefined }}
+        >
+          <div className="text-3xl animate-badge-pop">{popup.icon}</div>
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+              <FiAward className="text-accent text-xs" />
+              <span className="text-[9px] font-black text-accent uppercase tracking-[0.3em]">Achievement_Unlocked</span>
             </div>
-            <button
-              onClick={() => setPopup(null)}
-              className="ml-4 p-1.5 text-white/20 hover:text-white transition-colors"
-              aria-label="Dismiss achievement"
-            >
-              <FiX size={14} />
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <p className="text-sm font-bold text-white mt-0.5">{popup.title}</p>
+            <p className="text-[11px] text-white/50">{popup.desc}</p>
+          </div>
+          <button
+            onClick={dismissPopup}
+            className="ml-4 p-1.5 text-white/20 hover:text-white transition-colors"
+            aria-label="Dismiss achievement"
+          >
+            <FiX size={14} />
+          </button>
+        </div>
+      )}
     </AchievementContext.Provider>
   );
 };
