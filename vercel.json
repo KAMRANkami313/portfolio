@@ -13,6 +13,18 @@
       ]
     },
     {
+      "source": "/(favicon|apple-touch-icon|android-chrome-.*).png",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=86400" }
+      ]
+    },
+    {
+      "source": "/favicon.ico",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=86400" }
+      ]
+    },
+    {
       "source": "/(.*).pdf",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=86400" }
