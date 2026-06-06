@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { FiEye } from 'react-icons/fi';
 
 const VisitorCounter = () => {
@@ -20,12 +19,7 @@ const VisitorCounter = () => {
   }, []);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 2 }}
-      className="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 hidden lg:flex items-center gap-3 px-4 py-2 bg-surface/40 backdrop-blur-xl border border-white/5 rounded-full shadow-lg"
-    >
+    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 hidden lg:flex items-center gap-3 px-4 py-2 bg-surface/40 backdrop-blur-xl border border-white/5 rounded-full shadow-lg animate-fade-in-up-delayed">
       <FiEye className="text-accent/60 text-xs" />
       <span className="text-[9px] font-mono text-muted uppercase tracking-widest">
         Visitors:
@@ -33,7 +27,7 @@ const VisitorCounter = () => {
       <span className="text-[11px] font-bold text-accent tabular-nums">
         {isLoading ? '---' : count.toLocaleString()}
       </span>
-    </motion.div>
+    </div>
   );
 };
 

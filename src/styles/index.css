@@ -9,6 +9,7 @@
   --font-mono: "Geist Mono", "Fira Code", monospace;
 
   --animate-spin-slow: spin 8s linear infinite;
+  --animate-spin-reverse: spin 5s linear infinite reverse;
   --animate-float: float 6s ease-in-out infinite;
   --animate-typing-cursor: typing-cursor 1s step-end infinite;
   --animate-gradient-shift: gradient-shift 8s ease infinite;
@@ -21,6 +22,12 @@
   --animate-toast-out: toast-out 0.3s ease-in forwards;
   --animate-badge-pop: badge-pop 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   --animate-divider-flow: divider-flow 3s linear infinite;
+  --animate-music-bar: music-bar 0.8s ease-in-out infinite alternate;
+  --animate-fade-in-scale: fade-in-scale 1s cubic-bezier(0.16, 1, 0.3, 1)
+    forwards;
+  --animate-fade-in-right-delayed: fade-in-right 0.6s ease 2s both;
+  --animate-fade-in-up-delayed: fade-in-up 0.6s ease 2s both;
+  --animate-exit-up: exit-up 1s cubic-bezier(0.76, 0, 0.24, 1) forwards;
 }
 
 :root {
@@ -163,6 +170,117 @@
   }
 }
 
+@keyframes music-bar {
+  0% {
+    height: 4px;
+  }
+  100% {
+    height: 16px;
+  }
+}
+
+@keyframes fade-in-scale {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fade-in-right {
+  0% {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes exit-up {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-100vh);
+  }
+}
+
+@keyframes aura-1 {
+  0%,
+  100% {
+    transform: scale(1) translate(0, 0);
+    opacity: 0.08;
+  }
+  25% {
+    transform: scale(1.15) translate(80px, 40px);
+    opacity: 0.15;
+  }
+  50% {
+    transform: scale(1.05) translate(30px, 80px);
+    opacity: 0.08;
+  }
+  75% {
+    transform: scale(1.2) translate(-40px, 30px);
+    opacity: 0.12;
+  }
+}
+
+@keyframes aura-2 {
+  0%,
+  100% {
+    transform: scale(1) translate(0, 0);
+    opacity: 0.05;
+  }
+  25% {
+    transform: scale(1.2) translate(-60px, -30px);
+    opacity: 0.12;
+  }
+  50% {
+    transform: scale(1.1) translate(-30px, -70px);
+    opacity: 0.05;
+  }
+  75% {
+    transform: scale(1.15) translate(50px, -20px);
+    opacity: 0.1;
+  }
+}
+
+@keyframes aura-3 {
+  0%,
+  100% {
+    transform: scale(1) translate(0, 0);
+    opacity: 0.03;
+  }
+  25% {
+    transform: scale(1.1) translate(50px, -40px);
+    opacity: 0.08;
+  }
+  50% {
+    transform: scale(1.2) translate(-30px, 50px);
+    opacity: 0.03;
+  }
+  75% {
+    transform: scale(1.05) translate(-60px, 20px);
+    opacity: 0.06;
+  }
+}
+
 @layer base {
   * {
     @apply border-white/5;
@@ -268,6 +386,18 @@
   .scrollbar-thin::-webkit-scrollbar-thumb {
     background-color: rgba(255, 255, 255, 0.1);
     border-radius: 20px;
+  }
+
+  .animate-aura-1 {
+    animation: aura-1 20s linear infinite;
+  }
+
+  .animate-aura-2 {
+    animation: aura-2 25s linear infinite;
+  }
+
+  .animate-aura-3 {
+    animation: aura-3 30s linear infinite;
   }
 }
 

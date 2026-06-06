@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
 
 const Loader = ({ finishLoading }) => {
   const [percent, setPercent] = useState(0);
@@ -41,26 +40,14 @@ const Loader = ({ finishLoading }) => {
   }, [percent, finishLoading]);
 
   return (
-    <motion.div 
-      exit={{ y: "-100vh" }}
-      transition={{ duration: 1, ease: [0.76, 0, 0.24, 1] }}
-      className="fixed inset-0 z-200 flex flex-col items-center justify-center bg-dark"
-    >
+    <div className="fixed inset-0 z-200 flex flex-col items-center justify-center bg-dark animate-exit-up">
       <div className="absolute inset-0 grid-bg opacity-20" />
-      
+
       <div className="relative mb-16">
         {/* Outer spinning ring */}
-        <motion.div 
-          animate={{ rotate: 360 }}
-          transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-          className="w-36 h-36 rounded-full border-2 border-accent/10 border-t-accent"
-        />
+        <div className="w-36 h-36 rounded-full border-2 border-accent/10 border-t-accent animate-spin-slow" />
         {/* Inner spinning ring - opposite direction */}
-        <motion.div 
-          animate={{ rotate: -360 }}
-          transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-          className="absolute inset-3 rounded-full border border-white/5 border-b-accent/40"
-        />
+        <div className="absolute inset-3 rounded-full border border-white/5 border-b-accent/40 animate-spin-reverse" />
         {/* Center content */}
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center">
@@ -73,14 +60,14 @@ const Loader = ({ finishLoading }) => {
         <h1 className="text-3xl font-black tracking-[0.6em] text-white uppercase italic">
           KAMRAN<span className="text-accent">_</span>OS
         </h1>
-        
+
         <div className="w-72 h-0.5 bg-white/5 rounded-full overflow-hidden relative">
-          <motion.div 
+          <div
             style={{ width: `${percent}%` }}
-            className="absolute inset-y-0 left-0 bg-linear-to-r from-accent via-violet-400 to-fuchsia-400 rounded-full"
+            className="absolute inset-y-0 left-0 bg-linear-to-r from-accent via-violet-400 to-fuchsia-400 rounded-full transition-[width] duration-100"
           />
         </div>
-        
+
         <div className="flex items-center gap-3">
           <div className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
           <span className="text-[10px] font-mono text-muted uppercase tracking-[0.3em]">
@@ -100,7 +87,7 @@ const Loader = ({ finishLoading }) => {
            <p>LOCAL_HOST: 127.0.0.1</p>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
