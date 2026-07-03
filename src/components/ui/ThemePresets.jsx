@@ -1,90 +1,99 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useTheme, THEME_PRESETS } from '../../context/ThemeContext';
-import { useAchievement } from '../../context/AchievementContext';
-import { LuPalette } from 'react-icons/lu';
+import React, { useState, useEffect, useRef } from "react";
+import { Palette, Check } from "lucide-react";
+import { useTheme } from "../../context/ThemeContext";
+import { useAchievement } from "../../context/AchievementContext";
 
 const ThemePresets = () => {
-  const { accent, setAccent, activePreset, applyPreset } = useTheme();
-  const { unlock } = useAchievement();
   const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef(null);
+  const { accent, activePreset, applyPreset, presets } = useTheme();
+  const { unlock } = useAchievement();
 
-  const handlePreset = (preset) => {
-    applyPreset(preset.id);
-    if (preset.id !== 'default') {
-      unlock('used_preset');
-    }
-    unlock('changed_theme');
-  };
+  useEffect(() => {
+    if (!isOpen) return;
 
-  const handleCustomColor = (hex) => {
-    setAccent(hex);
-    unlock('changed_theme');
+    const handleClickOutside = (e) => {
+      if (containerRef.current && !containerRef.current.contains(e.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    const handleEscape = (e) => {
+      if (e.key === "Escape") setIsOpen(false);
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [isOpen]);
+
+  const handlePresetClick = (presetId) => {
+    applyPreset(presetId);
+    unlock("used_preset");
+    unlock("changed_theme");
+    setIsOpen(false);
   };
 
   return (
-    <div className="relative">
+    <div ref={containerRef} className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 bg-surface/50 backdrop-blur-md text-muted hover:text-white hover:border-accent/30 transition-all"
-        aria-label="Change theme color"
+        className="p-2 text-muted hover:text-white transition-colors"
+        aria-label="Open theme presets"
+        aria-expanded={isOpen}
       >
-        <LuPalette size={12} />
-        <span className="text-[9px] font-black uppercase tracking-widest hidden sm:inline">Theme</span>
-        <div
-          className="w-2.5 h-2.5 rounded-full border border-white/20"
-          style={{ backgroundColor: accent }}
-        />
+        <Palette size={18} />
       </button>
 
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 5, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 5, scale: 0.95 }}
-            transition={{ duration: 0.15 }}
-            className="absolute top-full mt-2 right-0 p-3 bg-surface/95 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl z-50 w-64"
-          >
-            <p className="text-[9px] font-black text-accent uppercase tracking-[0.3em] mb-3">Theme_Presets</p>
-            <div className="grid grid-cols-5 gap-2 mb-3">
-              {THEME_PRESETS.map((preset) => (
-                <button
-                  key={preset.id}
-                  onClick={() => handlePreset(preset)}
-                  className="group relative flex flex-col items-center gap-1 p-1.5 rounded-xl hover:bg-white/5 transition-colors"
-                  title={preset.name}
-                  aria-label={`Apply ${preset.name} theme`}
-                >
-                  <div
-                    style={{ backgroundColor: preset.accent }}
-                    className={`w-6 h-6 rounded-lg transition-all duration-200 group-hover:scale-110 shadow-md ${
-                      activePreset === preset.id
-                        ? "ring-2 ring-white/30 ring-offset-2 ring-offset-surface scale-110"
-                        : "opacity-60 hover:opacity-100"
-                    }`}
-                  />
-                  <span className="text-[7px] font-bold text-muted uppercase">{preset.name.slice(0, 4)}</span>
-                </button>
-              ))}
+      {isOpen && (
+        <div className="absolute right-0 top-full mt-2 w-56 glass-strong rounded-xl shadow-lg p-3 z-50 animate-fade-in-down">
+          <p className="text-[10px] font-mono text-muted uppercase tracking-widest mb-2 px-1">
+            Accent Color
+          </p>
+          <div className="grid grid-cols-4 gap-2">
+            {presets.map((preset) => (
+              <button
+                key={preset.id}
+                onClick={() => handlePresetClick(preset.id)}
+                className="relative aspect-square rounded-lg transition-transform hover:scale-110"
+                style={{ backgroundColor: preset.accent }}
+                aria-label={`Apply ${preset.name} theme`}
+                title={preset.name}
+              >
+                {activePreset === preset.id && (
+                  <Check size={14} className="absolute inset-0 m-auto text-white" />
+                )}
+              </button>
+            ))}
+          </div>
+          <div className="mt-3 pt-3 border-t border-white/10">
+            <p className="text-[10px] font-mono text-muted uppercase tracking-widest mb-2 px-1">
+              Custom
+            </p>
+            <div className="flex items-center gap-2">
+              <input
+                type="color"
+                value={accent}
+                onChange={(e) => {
+                  applyPreset("custom");
+                  document.documentElement.style.setProperty("--color-accent", e.target.value);
+                  const r = parseInt(e.target.value.slice(1, 3), 16);
+                  const g = parseInt(e.target.value.slice(3, 5), 16);
+                  const b = parseInt(e.target.value.slice(5, 7), 16);
+                  document.documentElement.style.setProperty("--color-accent-rgb", `${r}, ${g}, ${b}`);
+                  unlock("changed_theme");
+                }}
+                className="w-8 h-8 rounded cursor-pointer bg-transparent border border-white/10"
+                aria-label="Pick custom accent color"
+              />
+              <span className="text-xs text-muted font-mono">{accent}</span>
             </div>
-
-            <div className="border-t border-white/5 pt-3">
-              <p className="text-[9px] font-black text-muted uppercase tracking-[0.3em] mb-2">Custom_Accent</p>
-              <div className="flex items-center gap-2">
-                <input
-                  type="color"
-                  value={accent}
-                  onChange={(e) => handleCustomColor(e.target.value)}
-                  className="w-8 h-8 rounded-lg border border-white/10 cursor-pointer bg-transparent"
-                  aria-label="Pick custom accent color"
-                />
-                <span className="text-[10px] font-mono text-muted uppercase">{accent}</span>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

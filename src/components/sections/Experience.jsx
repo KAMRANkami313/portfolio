@@ -1,115 +1,113 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { EXPERIENCE } from '../../constants';
-import { FiBriefcase, FiCalendar, FiMapPin } from 'react-icons/fi';
+import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { Briefcase, Calendar, MapPin } from "lucide-react";
+import { EXPERIENCE } from "../../constants";
 
 const Experience = () => {
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReducedMotion(mq.matches);
+
+    const handler = (e) => setReducedMotion(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
   return (
-    <section id="experience" className="py-24 relative overflow-hidden">
+    <section id="experience" className="section relative overflow-hidden">
       <div className="container mx-auto px-6">
-        <div className="flex flex-col md:flex-row items-center justify-between mb-24 gap-8">
-          <div className="max-w-xl">
-            <h2 className="text-4xl md:text-5xl font-black tracking-tighter uppercase italic bg-linear-to-r from-white to-white/30 bg-clip-text text-transparent">
-              Engineering_Roadmap
-            </h2>
-            <p className="mt-4 text-muted text-sm md:text-base leading-relaxed">
-              A chronological trace of technical evolution, academic milestones, and professional development within the MERN ecosystem.
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
+          <div>
+            <p className="text-xs font-mono text-accent tracking-[0.3em] uppercase mb-2">
+              Experience
             </p>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
+              Engineering Roadmap
+            </h2>
           </div>
-          <div className="hidden md:flex items-center gap-4 px-6 py-3 bg-surface/40 border border-white/5 rounded-2xl backdrop-blur-md">
-            <div className="flex -space-x-3">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="w-8 h-8 rounded-full border-2 border-dark bg-accent/20 flex items-center justify-center text-[10px] font-bold">
-                  0{i + 1}
-                </div>
-              ))}
-            </div>
-            <span className="text-[10px] font-black uppercase tracking-widest text-muted">Phase_Markers_Active</span>
-          </div>
+          <p className="text-sm text-muted md:max-w-xs">
+            {EXPERIENCE.length} chapters of building, shipping, and learning.
+          </p>
         </div>
 
-        <div className="relative max-w-5xl mx-auto">
-          <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-px bg-linear-to-b from-accent/50 via-white/10 to-transparent transform md:-translate-x-1/2" />
+        <div className="relative max-w-4xl mx-auto">
+          <div
+            className="absolute left-4 md:left-1/2 top-0 bottom-0 w-px -translate-x-1/2"
+            style={{ background: "linear-gradient(to bottom, var(--color-accent), transparent)" }}
+            aria-hidden="true"
+          />
 
-          <div className="space-y-20">
-            {EXPERIENCE.map((item, index) => (
+          {EXPERIENCE.map((item, i) => {
+            const isEven = i % 2 === 0;
+            return (
               <motion.div
-                key={index}
+                key={`${item.year}-${item.title}`}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: index * 0.1 }}
-                viewport={{ once: true, margin: "-100px" }}
-                className={`relative flex flex-col md:flex-row items-start justify-between w-full ${
-                  index % 2 === 0 ? "md:flex-row-reverse" : ""
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.5 }}
+                className={`relative flex items-start mb-8 ${
+                  isEven ? "md:flex-row" : "md:flex-row-reverse"
                 }`}
               >
-                <div className="hidden md:block w-[45%]" />
+                <div className="hidden md:block md:w-1/2" />
 
-                <div className="absolute left-4 md:left-1/2 transform -translate-x-1/2 flex items-center justify-center z-20">
-                  <motion.div 
-                    whileInView={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="w-10 h-10 rounded-xl bg-dark border-2 border-accent flex items-center justify-center shadow-[0_0_20px_rgba(59,130,246,0.3)]"
+                <div className="absolute left-4 md:left-1/2 -translate-x-1/2 z-10">
+                  <motion.div
+                    className="flex items-center justify-center w-9 h-9 rounded-full bg-surface border-2"
+                    style={{
+                      borderColor: "var(--color-accent)",
+                      boxShadow: `0 0 20px rgba(var(--color-accent-rgb), 0.3)`,
+                    }}
+                    animate={
+                      reducedMotion
+                        ? {}
+                        : { scale: [1, 1.15, 1] }
+                    }
+                    transition={
+                      reducedMotion
+                        ? {}
+                        : { duration: 2, repeat: Infinity, ease: "easeInOut" }
+                    }
                   >
-                    <FiBriefcase className="text-accent text-sm" />
+                    <Briefcase className="w-4 h-4 text-accent" />
                   </motion.div>
                 </div>
 
-                <div className="w-full md:w-[45%] pl-16 md:pl-0">
-                  <div className="relative group">
-                    <div className="absolute -inset-2 bg-accent/5 rounded-[2.5rem] blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500" />
-                    
-                    <div className="relative p-8 rounded-4xl bg-surface/40 backdrop-blur-2xl border border-white/5 group-hover:border-accent/30 transition-all duration-500 overflow-hidden">
-                      <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity">
-                        <FiBriefcase size={120} />
-                      </div>
-
-                      <div className="flex flex-wrap items-center gap-4 mb-6">
-                        <div className="flex items-center gap-2 px-3 py-1 bg-accent/10 border border-accent/20 rounded-full">
-                          <FiCalendar className="text-accent text-[10px]" />
-                          <span className="text-[10px] font-black text-accent uppercase tracking-widest">{item.year}</span>
-                        </div>
-                        <div className="flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full">
-                          <FiMapPin className="text-muted text-[10px]" />
-                          <span className="text-[10px] font-black text-muted uppercase tracking-widest">{item.company}</span>
-                        </div>
-                      </div>
-
-                      <h3 className="text-2xl font-bold text-white tracking-tight mb-2 group-hover:text-accent transition-colors">
-                        {item.title}
-                      </h3>
-                      
-                      <div className="w-12 h-1 bg-accent/20 rounded-full mb-6 group-hover:w-24 group-hover:bg-accent transition-all duration-500" />
-
-                      <p className="text-muted text-sm md:text-base leading-relaxed border-l-2 border-white/5 pl-6 group-hover:border-accent/30 transition-colors">
-                        {item.description}
-                      </p>
-
-                      {/* Tags */}
-                      {item.tags && (
-                        <div className="flex flex-wrap gap-2 mt-6">
-                          {item.tags.map((tag, i) => (
-                            <span key={i} className="px-2 py-0.5 text-[9px] font-mono font-bold bg-accent/5 text-accent/70 rounded border border-accent/10">
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-
-                      <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-between">
-                         <span className="text-[9px] font-mono text-muted uppercase tracking-[0.2em]">Deployment_Status: Verified</span>
-                         <div className="flex gap-1">
-                            {[...Array(3)].map((_, i) => (
-                              <div key={i} className="w-1 h-1 bg-accent/40 rounded-full" />
-                            ))}
-                         </div>
-                      </div>
+                <div className="ml-12 md:ml-0 md:w-1/2 md:px-8">
+                  <div className="card card-hover p-5">
+                    <div className="flex flex-wrap items-center gap-2 mb-2">
+                      <span className="chip text-[11px]">
+                        <Calendar size={11} />
+                        {item.year}
+                      </span>
+                      <span className="chip text-[11px]">
+                        <MapPin size={11} />
+                        {item.company}
+                      </span>
                     </div>
+
+                    <h3 className="text-lg font-bold text-white mb-2">{item.title}</h3>
+                    <p className="text-sm text-muted leading-relaxed mb-3">
+                      {item.description}
+                    </p>
+
+                    {item.tags && item.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5">
+                        {item.tags.map((tag) => (
+                          <span key={tag} className="chip text-[10px]">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               </motion.div>
-            ))}
-          </div>
+            );
+          })}
         </div>
       </div>
     </section>

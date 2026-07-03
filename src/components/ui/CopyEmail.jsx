@@ -1,40 +1,58 @@
-import React, { useState } from 'react';
-import { FiCopy, FiCheck } from 'react-icons/fi';
-import { CONTACT } from '../../constants';
+import React, { useState, useRef, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Copy, Check, Mail } from "lucide-react";
+import { useToast } from "../../context/ToastContext";
+import { CONTACT } from "../../constants";
 
 const CopyEmail = () => {
   const [copied, setCopied] = useState(false);
+  const timeoutRef = useRef(null);
+  const { addToast } = useToast();
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(CONTACT.email);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+  const handleCopy = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(CONTACT.email);
+      setCopied(true);
+      addToast("Email copied to clipboard", "info");
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      timeoutRef.current = setTimeout(() => setCopied(false), 2000);
+    } catch {
+      addToast("Failed to copy email", "error");
+    }
+  }, [addToast]);
 
   return (
-    <>
-      <button
-        onClick={handleCopy}
-        className="fixed bottom-24 left-6 z-40 p-3 bg-surface/80 backdrop-blur-md border border-white/10 rounded-full text-muted hover:text-accent transition-all md:flex hidden group"
-        aria-label="Copy email address"
-      >
-        <FiCopy className="group-hover:scale-110 transition-transform" />
-        <span className="absolute left-full ml-4 px-2 py-1 bg-accent text-white text-[10px] font-bold rounded opacity-0 group-hover:opacity-100 whitespace-nowrap transition-opacity">
-          Copy Email
-        </span>
-      </button>
-
-      <div
-        className={`fixed bottom-10 left-1/2 -translate-x-1/2 z-100 px-6 py-3 bg-accent text-white rounded-2xl shadow-2xl flex items-center gap-3 font-bold text-sm transition-all duration-300 will-animate ${
-          copied
-            ? 'opacity-100 translate-y-0 scale-100'
-            : 'opacity-0 translate-y-5 scale-95 pointer-events-none'
-        }`}
-      >
-        <FiCheck />
-        <span>Email Copied to Clipboard!</span>
-      </div>
-    </>
+    <button
+      onClick={handleCopy}
+      className="fixed bottom-6 left-6 z-50 flex items-center gap-2 px-3 py-2 glass-strong rounded-full text-sm shadow-md hover:shadow-lg transition-all will-animate"
+      aria-label={copied ? "Email copied" : "Copy email to clipboard"}
+    >
+      <AnimatePresence mode="wait">
+        {copied ? (
+          <motion.span
+            key="copied"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            className="flex items-center gap-2"
+          >
+            <Check size={14} className="text-success" />
+            <span className="text-success font-medium">Copied!</span>
+          </motion.span>
+        ) : (
+          <motion.span
+            key="copy"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            className="flex items-center gap-2"
+          >
+            <Mail size={14} className="text-accent" />
+            <span className="text-white font-medium hidden sm:inline">Copy Email</span>
+          </motion.span>
+        )}
+      </AnimatePresence>
+    </button>
   );
 };
 

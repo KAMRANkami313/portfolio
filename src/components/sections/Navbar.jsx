@@ -1,34 +1,26 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { FiMenu, FiX, FiAward } from 'react-icons/fi';
-import { NAV_LINKS } from '../../constants';
-import TimeDisplay from '../ui/TimeDisplay';
-import DevToggle from '../ui/DevToggle';
-import ThemePresets from '../ui/ThemePresets';
+import React, { useState, useEffect, useRef } from "react";
+import { Menu, X, Award, Sparkles } from "lucide-react";
+import { NAV_LINKS } from "../../constants";
+import ThemePresets from "../ui/ThemePresets";
+import TimeDisplay from "../ui/TimeDisplay";
 
-const Navbar = () => {
+const Navbar = ({ onAchievementsClick }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState('');
-  const [isVisible, setIsVisible] = useState(false);
-  const navRef = useRef(null);
-
-  // Slide-in animation on mount
-  useEffect(() => {
-    const timer = setTimeout(() => setIsVisible(true), 100);
-    return () => clearTimeout(timer);
-  }, []);
+  const [activeSection, setActiveSection] = useState("");
+  const mobileMenuRef = useRef(null);
+  const mobileToggleRef = useRef(null);
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
-    const sectionIds = NAV_LINKS.map(link => link.href.replace('#', ''));
-
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -37,10 +29,11 @@ const Navbar = () => {
           }
         });
       },
-      { threshold: 0.3, rootMargin: '-80px 0px -50% 0px' }
+      { threshold: 0.3, rootMargin: "-80px 0px -50% 0px" }
     );
 
-    sectionIds.forEach(id => {
+    const sectionIds = NAV_LINKS.map((link) => link.href.replace("#", ""));
+    sectionIds.forEach((id) => {
       const el = document.getElementById(id);
       if (el) observer.observe(el);
     });
@@ -48,110 +41,152 @@ const Navbar = () => {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+
+    const handleKeyDown = (e) => {
+      if (e.key !== "Escape") return;
+      setIsMobileMenuOpen(false);
+      mobileToggleRef.current?.focus();
+    };
+
+    const handleFocus = (e) => {
+      if (!mobileMenuRef.current?.contains(e.target) && !mobileToggleRef.current?.contains(e.target)) {
+        mobileMenuRef.current?.querySelector("a, button")?.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("focusin", handleFocus);
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("focusin", handleFocus);
+      document.body.style.overflow = "";
+    };
+  }, [isMobileMenuOpen]);
+
+  const handleLinkClick = () => setIsMobileMenuOpen(false);
+
   return (
     <nav
-      ref={navRef}
-      className={`fixed top-0 left-0 right-0 z-100 flex items-center justify-center p-3 md:p-4 transition-all duration-500 ${
-        isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
-      }`}
+      className="fixed top-0 left-0 right-0 z-100 transition-all duration-300"
+      style={{
+        paddingTop: isScrolled ? "0.5rem" : "1rem",
+        paddingBottom: isScrolled ? "0.5rem" : "1rem",
+      }}
     >
-      <div className={`flex items-center justify-between w-full max-w-7xl px-5 py-2.5 rounded-3xl transition-all duration-500 border ${
-        isScrolled
-          ? "bg-surface/80 backdrop-blur-2xl border-white/10 shadow-[0_8px_40px_rgba(0,0,0,0.5)]"
-          : "bg-transparent border-transparent"
-      }`}>
-        <div className="flex items-center gap-6">
-           <a href="#hero" className="text-xl font-black tracking-tighter bg-linear-to-r from-white to-white/50 bg-clip-text text-transparent hover:from-accent hover:to-accent/60 transition-all" aria-label="Go to top">
-             MK<span className="text-accent">.</span>
-           </a>
+      <div className="container mx-auto px-6">
+        <div
+          className={`flex items-center justify-between rounded-2xl transition-all duration-300 ${
+            isScrolled ? "glass-strong shadow-md px-4 py-2.5" : "px-1 py-1"
+          }`}
+        >
+          <a
+            href="#hero"
+            className="flex items-center gap-2 font-bold text-lg"
+            aria-label="Muhammad Kamran — Home"
+          >
+            <span className="text-gradient">MK</span>
+            <span className="text-muted">.</span>
+          </a>
 
-           <div className="hidden lg:flex gap-0.5">
-             {NAV_LINKS.map((link) => {
-               const sectionId = link.href.replace('#', '');
-               const isActive = activeSection === sectionId;
-               return (
-                 <a
-                   key={link.label}
-                   href={link.href}
-                   className={`relative px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-widest transition-all rounded-lg ${
-                     isActive
-                       ? "text-white bg-accent/10"
-                       : "text-muted hover:text-white hover:bg-white/5"
-                   }`}
-                 >
-                   {link.label}
-                   {isActive && (
-                     <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3 h-0.5 bg-accent rounded-full transition-all duration-300" />
-                   )}
-                 </a>
-               );
-             })}
-           </div>
-        </div>
+          <div className="hidden lg:flex items-center gap-1">
+            {NAV_LINKS.map((link) => {
+              const isActive = activeSection === link.href.replace("#", "");
+              return (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  aria-current={isActive ? "page" : undefined}
+                  className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
+                    isActive ? "text-white" : "text-muted hover:text-white"
+                  }`}
+                >
+                  {link.label}
+                </a>
+              );
+            })}
+          </div>
 
-        <div className="flex items-center gap-3">
-          <div className="hidden lg:flex items-center gap-4 pr-4 border-r border-white/10">
+          <div className="flex items-center gap-2">
             <ThemePresets />
-            <DevToggle />
             <TimeDisplay />
+            <button
+              onClick={onAchievementsClick}
+              className="hidden md:flex btn-ghost p-2"
+              aria-label="View achievements"
+              title="Achievements"
+            >
+              <Award size={18} />
+            </button>
+            <a href="#contact" className="hidden md:inline-flex btn-primary">
+              Hire Me
+            </a>
+            <button
+              ref={mobileToggleRef}
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="lg:hidden p-2 text-white"
+              aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={isMobileMenuOpen}
+            >
+              {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
           </div>
-
-          <a
-            href="#contact"
-            className="hidden md:block px-5 py-2 text-[11px] bg-accent text-white rounded-full font-black uppercase tracking-widest hover:shadow-[0_0_20px_rgba(var(--color-accent-rgb),0.4)] transition-all duration-300"
-          >
-            Hire Me
-          </a>
-
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden p-2 text-white text-xl"
-            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
-          >
-            {isMobileMenuOpen ? <FiX /> : <FiMenu />}
-          </button>
         </div>
-      </div>
 
-      {/* Mobile menu — CSS transition */}
-      <div
-        className={`absolute top-20 left-3 right-3 p-6 bg-surface/95 backdrop-blur-2xl border border-white/10 rounded-3xl lg:hidden z-100 shadow-2xl transition-all duration-300 origin-top ${
-          isMobileMenuOpen
-            ? 'opacity-100 scale-100 translate-y-0'
-            : 'opacity-0 scale-95 -translate-y-4 pointer-events-none'
-        }`}
-      >
-        <div className="flex flex-col gap-5 items-center text-center">
-          {NAV_LINKS.map((link) => {
-            const sectionId = link.href.replace('#', '');
-            const isActive = activeSection === sectionId;
-            return (
-              <a
-                key={link.label}
-                href={link.href}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={`text-lg font-black uppercase tracking-tighter transition-colors ${
-                  isActive ? "text-accent" : "text-white hover:text-accent"
-                }`}
+        {isMobileMenuOpen && (
+          <div
+            ref={mobileMenuRef}
+            className="lg:hidden mt-2 glass-strong rounded-2xl p-4 animate-fade-in-down"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Mobile navigation menu"
+          >
+            <div className="flex flex-col gap-1">
+              {NAV_LINKS.map((link) => {
+                const isActive = activeSection === link.href.replace("#", "");
+                return (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    onClick={handleLinkClick}
+                    aria-current={isActive ? "page" : undefined}
+                    className={`px-3 py-2.5 text-sm font-medium rounded-lg transition-colors ${
+                      isActive ? "text-white bg-accent/10" : "text-muted hover:text-white hover:bg-surface-light"
+                    }`}
+                  >
+                    {link.label}
+                  </a>
+                );
+              })}
+            </div>
+
+            <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
+              <ThemePresets />
+              <button
+                onClick={() => {
+                  handleLinkClick();
+                  onAchievementsClick();
+                }}
+                className="flex items-center gap-2 px-3 py-2 text-sm text-muted hover:text-white transition-colors"
+                aria-label="View achievements"
               >
-                {link.label}
-                {isActive && <span className="ml-2 text-[8px] text-accent">●</span>}
-              </a>
-            );
-          })}
-          <div className="w-full h-px bg-white/5 my-1" />
-          <div className="flex items-center gap-4">
-            <ThemePresets />
-            <DevToggle />
+                <Award size={16} />
+                <span>Achievements</span>
+              </button>
+            </div>
+
+            <a
+              href="#contact"
+              onClick={handleLinkClick}
+              className="mt-3 inline-flex btn-primary w-full justify-center"
+            >
+              Hire Me
+            </a>
           </div>
-          <a
-            href="#contact"
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="px-8 py-3 bg-accent text-white rounded-full font-black uppercase tracking-widest transition-all"
-          >
-            Hire Me
-          </a>
-        </div>
+        )}
       </div>
     </nav>
   );

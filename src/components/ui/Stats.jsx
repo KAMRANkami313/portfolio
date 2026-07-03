@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
-import { STATS } from '../../constants';
+import React, { useState, useEffect, useRef } from "react";
+import { motion } from "framer-motion";
+import { STATS } from "../../constants";
 
-const AnimatedCounter = ({ value, suffix = "", duration = 2 }) => {
+const AnimatedCounter = ({ value, suffix, duration = 2000 }) => {
   const [count, setCount] = useState(0);
   const [hasAnimated, setHasAnimated] = useState(false);
   const ref = useRef(null);
@@ -12,25 +12,21 @@ const AnimatedCounter = ({ value, suffix = "", duration = 2 }) => {
       ([entry]) => {
         if (entry.isIntersecting && !hasAnimated) {
           setHasAnimated(true);
-          const startTime = performance.now();
-          
-          const animate = (currentTime) => {
-            const elapsed = (currentTime - startTime) / 1000;
+          const start = Date.now();
+
+          const animate = () => {
+            const elapsed = Date.now() - start;
             const progress = Math.min(elapsed / duration, 1);
-            
-            // Ease out cubic
             const eased = 1 - Math.pow(1 - progress, 3);
-            setCount(Math.floor(eased * value));
-            
-            if (progress < 1) {
-              requestAnimationFrame(animate);
-            }
+            setCount(Math.round(eased * value));
+            if (progress < 1) requestAnimationFrame(animate);
+            else setCount(value);
           };
-          
+
           requestAnimationFrame(animate);
         }
       },
-      { threshold: 0.5 }
+      { threshold: 0.3 }
     );
 
     if (ref.current) observer.observe(ref.current);
@@ -39,41 +35,35 @@ const AnimatedCounter = ({ value, suffix = "", duration = 2 }) => {
 
   return (
     <span ref={ref}>
-      {count}{suffix}
+      {count}
+      {suffix}
     </span>
   );
 };
 
 const Stats = () => {
   return (
-    <div className="py-20 bg-surface/20 border-y border-white/5 relative overflow-hidden">
-      <div className="absolute inset-0 grid-bg opacity-10" />
-      
-      <div className="container mx-auto px-6 relative z-10">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-4">
-          {STATS.map((stat, index) => (
-            <motion.div 
-              key={index} 
+    <section className="py-12">
+      <div className="container mx-auto px-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {STATS.map((stat) => (
+            <motion.div
+              key={stat.label}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="flex flex-col items-center text-center group"
+              transition={{ duration: 0.4 }}
+              className="card p-5 text-center"
             >
-              <div className="relative mb-2">
-                <h4 className="text-4xl md:text-5xl font-black text-white tracking-tighter group-hover:text-accent transition-colors duration-500">
-                  <AnimatedCounter value={stat.value} suffix={stat.suffix} />
-                </h4>
-                <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-1 bg-accent group-hover:w-full transition-all duration-500" />
-              </div>
-              <p className="text-[10px] font-mono font-black text-muted uppercase tracking-[0.4em] mt-4">
-                {stat.label}
+              <p className="text-3xl md:text-4xl font-black text-gradient mb-1">
+                <AnimatedCounter value={stat.value} suffix={stat.suffix} />
               </p>
+              <p className="text-xs text-muted uppercase tracking-widest">{stat.label}</p>
             </motion.div>
           ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

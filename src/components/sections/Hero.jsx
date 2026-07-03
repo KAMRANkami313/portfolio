@@ -1,12 +1,13 @@
 import React, { useState, useEffect, lazy, Suspense } from "react";
+import { ArrowRight, FileText } from "lucide-react";
+import { GithubIcon as Github, LinkedinIcon as Linkedin } from "../ui/BrandIcons";
 import { HERO_CONTENT } from "../../constants";
-import Reveal from "../ui/Reveal";
 import ProfileImage from "../ui/ProfileImage";
-import { FiDownload, FiGithub, FiLinkedin, FiArrowRight } from "react-icons/fi";
+import Reveal from "../ui/Reveal";
 
 const GithubStats = lazy(() => import("../ui/GithubStats"));
 
-const TypingAnimation = ({ words, typingSpeed = 100, deletingSpeed = 50, pauseDuration = 2000 }) => {
+const TypingAnimation = ({ words }) => {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [currentText, setCurrentText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
@@ -14,110 +15,126 @@ const TypingAnimation = ({ words, typingSpeed = 100, deletingSpeed = 50, pauseDu
   useEffect(() => {
     const word = words[currentWordIndex];
 
-    const timeout = setTimeout(() => {
-      if (!isDeleting) {
-        setCurrentText(word.substring(0, currentText.length + 1));
-        if (currentText === word) {
-          setTimeout(() => setIsDeleting(true), pauseDuration);
-          return;
-        }
-      } else {
-        setCurrentText(word.substring(0, currentText.length - 1));
-        if (currentText === "") {
-          setIsDeleting(false);
-          setCurrentWordIndex((prev) => (prev + 1) % words.length);
-        }
-      }
-    }, isDeleting ? deletingSpeed : typingSpeed);
+    let timeoutId;
+    if (!isDeleting && currentText === word) {
+      timeoutId = setTimeout(() => setIsDeleting(true), 2000);
+    } else if (isDeleting && currentText === "") {
+      setIsDeleting(false);
+      setCurrentWordIndex((prev) => (prev + 1) % words.length);
+    } else {
+      const nextChar = isDeleting
+        ? word.substring(0, currentText.length - 1)
+        : word.substring(0, currentText.length + 1);
+      timeoutId = setTimeout(
+        () => setCurrentText(nextChar),
+        isDeleting ? 50 : 100
+      );
+    }
 
-    return () => clearTimeout(timeout);
-  }, [currentText, isDeleting, currentWordIndex, words, typingSpeed, deletingSpeed, pauseDuration]);
+    return () => clearTimeout(timeoutId);
+  }, [currentText, isDeleting, currentWordIndex, words]);
 
   return (
-    <span className="relative">
+    <span className="text-gradient">
       {currentText}
-      <span className="absolute -right-0.5 top-0 bottom-0 w-0.75 bg-accent animate-typing-cursor" />
+      <span className="animate-blink">|</span>
     </span>
   );
 };
 
 const Hero = () => {
+  const [nameFirst, nameLast] = HERO_CONTENT.name.split(" ");
+
   return (
-    <section id="hero" className="relative min-h-screen flex items-center justify-center pt-32 pb-20 overflow-hidden">
-      <div className="grid-bg absolute inset-0 -z-10 opacity-30" />
+    <section id="hero" className="min-h-screen flex items-center justify-center relative pt-24 pb-12">
+      <div className="bg-grid absolute inset-0 -z-10 mask-radial" aria-hidden="true" />
+      <div
+        className="absolute top-1/4 left-1/4 w-100 h-100 rounded-full -z-20 blur-[160px] opacity-20"
+        style={{ background: "var(--color-accent)" }}
+        aria-hidden="true"
+      />
 
-      <div className="container mx-auto px-6 relative z-10">
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-16">
-
-          <div className="w-full lg:w-1/2 text-left order-2 lg:order-1">
+      <div className="container mx-auto px-6">
+        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+          <div className="order-2 lg:order-1 flex-1 max-w-2xl">
             <Reveal>
-              <div className="flex items-center gap-3 mb-6">
-                <div className="flex gap-1">
-                   <div className="w-1 h-1 rounded-full bg-accent animate-ping" />
-                   <div className="w-1 h-1 rounded-full bg-accent" />
-                </div>
-                <span className="px-4 py-1.5 rounded-full border border-accent/20 bg-accent/5 text-[10px] font-black uppercase tracking-[0.4em] text-accent">
-                  Status: Available_For_Hire
+              <div className="inline-flex items-center gap-2 chip mb-6">
+                <span className="relative flex w-2 h-2">
+                  <span className="absolute inline-flex w-full h-full rounded-full opacity-75 animate-pulse-soft" style={{ background: "var(--color-success)" }} />
+                  <span className="relative inline-flex w-2 h-2 rounded-full" style={{ background: "var(--color-success)" }} />
                 </span>
+                <span className="text-xs font-mono">Available for opportunities</span>
               </div>
             </Reveal>
 
-            <Reveal>
-              <h1 className="text-5xl md:text-8xl font-black tracking-tighter mb-6 bg-linear-to-b from-white via-white to-white/30 bg-clip-text text-transparent leading-[0.9]">
-                {HERO_CONTENT.name.split(" ")[0]}<br />
-                {HERO_CONTENT.name.split(" ")[1]}
+            <Reveal delay={100}>
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-black tracking-tight mb-2">
+                <span className="block text-white">{nameFirst}</span>
+                <span className="block text-gradient">{nameLast}</span>
               </h1>
             </Reveal>
 
-            <Reveal>
-              <h2 className="text-xl md:text-3xl font-bold text-accent mb-8 uppercase tracking-[0.2em] font-mono min-h-10">
+            <Reveal delay={200}>
+              <h2 className="text-xl md:text-2xl font-semibold mb-6 h-8">
                 <TypingAnimation words={HERO_CONTENT.roles} />
               </h2>
             </Reveal>
 
-            <Reveal>
-              <p className="text-muted text-lg md:text-xl max-w-xl mb-12 leading-relaxed font-medium border-l-2 border-accent/20 pl-6">
+            <Reveal delay={300}>
+              <p className="text-base md:text-lg text-muted mb-8 max-w-xl leading-relaxed">
                 {HERO_CONTENT.description}
               </p>
             </Reveal>
 
-            <div className="opacity-0 animate-hero-buttons will-animate flex flex-col sm:flex-row items-center gap-6">
-              <a
-                href="#projects"
-                className="group relative w-full sm:w-auto px-10 py-5 bg-white text-black rounded-2xl font-black uppercase tracking-widest overflow-hidden transition-transform hover:scale-105"
-              >
-                <span className="relative z-10 flex items-center justify-center gap-2">
-                  View Projects <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
-                </span>
-                <div className="absolute inset-0 bg-accent translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
-              </a>
+            <Reveal delay={400}>
+              <div className="flex flex-wrap gap-3 mb-8">
+                <a href="#projects" className="btn-primary">
+                  View Projects
+                  <ArrowRight size={16} />
+                </a>
+                <a href={HERO_CONTENT.resumeLink} className="btn-ghost" download>
+                  <FileText size={16} />
+                  Resume
+                </a>
+              </div>
+            </Reveal>
 
-              <a
-                href={HERO_CONTENT.resumeLink}
-                className="flex items-center justify-center gap-3 w-full sm:w-auto px-10 py-5 bg-surface/50 backdrop-blur-md border border-white/10 rounded-2xl font-black uppercase tracking-widest hover:bg-white/5 hover:border-accent/30 transition-all"
-              >
-                <FiDownload /> Resume
-              </a>
-            </div>
+            <Reveal delay={500}>
+              <div className="flex items-center gap-3">
+                <a
+                  href={HERO_CONTENT.githubLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2.5 text-muted hover:text-white transition-colors"
+                  aria-label="GitHub profile"
+                >
+                  <Github size={20} />
+                </a>
+                <a
+                  href={HERO_CONTENT.linkedinLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2.5 text-muted hover:text-white transition-colors"
+                  aria-label="LinkedIn profile"
+                >
+                  <Linkedin size={20} />
+                </a>
+              </div>
+            </Reveal>
           </div>
 
-          <div className="w-full lg:w-1/2 flex flex-col items-center justify-center order-1 lg:order-2">
-            <ProfileImage />
-            <div className="hidden lg:block mt-12 w-full max-w-md">
-              <Suspense fallback={<div className="h-40" />}>
+          <div className="order-1 lg:order-2 shrink-0">
+            <Reveal delay={200}>
+              <ProfileImage />
+            </Reveal>
+            <Suspense fallback={null}>
+              <div className="hidden lg:block mt-8">
                 <GithubStats />
-              </Suspense>
-            </div>
+              </div>
+            </Suspense>
           </div>
-        </div>
-
-        <div className="opacity-0 animate-hero-social will-animate flex lg:hidden items-center justify-center gap-10 mt-16">
-          <a href={HERO_CONTENT.githubLink} target="_blank" rel="noopener noreferrer" className="text-2xl text-muted hover:text-accent transition-all" aria-label="GitHub profile"><FiGithub /></a>
-          <a href={HERO_CONTENT.linkedinLink} target="_blank" rel="noopener noreferrer" className="text-2xl text-muted hover:text-accent transition-all" aria-label="LinkedIn profile"><FiLinkedin /></a>
         </div>
       </div>
-
-      <div className="absolute top-1/2 right-0 -translate-y-1/2 -z-20 w-150 h-150 bg-accent/5 blur-[160px] rounded-full pointer-events-none" />
     </section>
   );
 };

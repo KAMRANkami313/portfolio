@@ -1,10 +1,40 @@
-import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useAchievement } from '../../context/AchievementContext';
-import { FiAward, FiX } from 'react-icons/fi';
+import React, { useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { X, Award, Lock } from "lucide-react";
+import { useAchievement } from "../../context/AchievementContext";
 
 const Achievements = ({ isOpen, onClose }) => {
   const { unlocked, total, count, defs } = useAchievement();
+  const dialogRef = useRef(null);
+  const closeButtonRef = useRef(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (e) => {
+      if (e.key !== "Escape") return;
+      onClose();
+    };
+
+    const handleFocus = (e) => {
+      if (!dialogRef.current?.contains(e.target)) {
+        closeButtonRef.current?.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("focusin", handleFocus);
+    document.body.style.overflow = "hidden";
+    closeButtonRef.current?.focus();
+
+    return () => {
+      document.removeEventListener("keydown", handleFocus);
+      document.removeEventListener("focusin", handleFocus);
+      document.body.style.overflow = "";
+    };
+  }, [isOpen, onClose]);
+
+  const percentage = total > 0 ? Math.round((count / total) * 100) : 0;
 
   return (
     <AnimatePresence>
@@ -13,76 +43,95 @@ const Achievements = ({ isOpen, onClose }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-200 flex items-center justify-center bg-dark/80 backdrop-blur-md"
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 z-2000 flex items-center justify-center p-4"
+          style={{ backgroundColor: "rgba(0, 0, 0, 0.7)" }}
           onClick={onClose}
           role="dialog"
           aria-modal="true"
           aria-label="Achievements"
         >
           <motion.div
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.95, opacity: 0 }}
+            ref={dialogRef}
+            initial={{ opacity: 0, scale: 0.96, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.96, y: 20 }}
+            transition={{ duration: 0.2 }}
+            className="glass-strong rounded-2xl shadow-lg w-full max-w-lg max-h-[80vh] overflow-hidden flex flex-col"
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-lg mx-4 bg-surface/95 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-[0_32px_64px_rgba(0,0,0,0.8)] overflow-hidden"
           >
-            <div className="flex items-center justify-between px-6 py-5 border-b border-white/5">
+            <div className="flex items-center justify-between p-6 border-b border-white/10">
               <div className="flex items-center gap-3">
-                <FiAward className="text-accent text-xl" />
+                <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-accent/10 border border-accent/20">
+                  <Award className="w-5 h-5 text-accent" />
+                </div>
                 <div>
-                  <h3 className="text-lg font-black text-white">Achievements</h3>
-                  <p className="text-[10px] font-mono text-muted">{count}/{total} Unlocked</p>
+                  <h2 className="text-lg font-bold text-white">Achievements</h2>
+                  <p className="text-xs text-muted">
+                    {count} of {total} unlocked · {percentage}%
+                  </p>
                 </div>
               </div>
               <button
+                ref={closeButtonRef}
                 onClick={onClose}
-                className="p-2 text-muted hover:text-white hover:bg-white/5 rounded-xl transition-all"
+                className="p-2 text-muted hover:text-white transition-colors"
                 aria-label="Close achievements"
               >
-                <FiX />
+                <X size={18} />
               </button>
             </div>
 
-            <div className="p-6 max-h-[60vh] overflow-y-auto scrollbar-thin">
-              <div className="mb-6">
-                <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-linear-to-r from-accent/60 to-accent rounded-full transition-all duration-500"
-                    style={{ width: `${(count / total) * 100}%` }}
-                  />
-                </div>
+            <div className="p-4 border-b border-white/10">
+              <div className="h-2 rounded-full bg-surface-light overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all duration-500"
+                  style={{
+                    width: `${percentage}%`,
+                    background: "linear-gradient(to right, var(--color-accent), var(--color-accent-soft))",
+                  }}
+                />
               </div>
+            </div>
 
-              <div className="grid grid-cols-1 gap-3">
-                {Object.entries(defs).map(([key, def]) => {
-                  const isDone = !!unlocked[key];
-                  return (
-                    <motion.div
-                      key={key}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className={`flex items-center gap-4 p-4 rounded-2xl border transition-all ${
-                        isDone
-                          ? 'bg-accent/5 border-accent/20'
-                          : 'bg-white/2 border-white/5 opacity-50'
+            <div className="flex-1 overflow-y-auto scrollbar-thin p-4 space-y-2">
+              {Object.entries(defs).map(([key, def]) => {
+                const isUnlocked = !!unlocked[key];
+                const Icon = def.Icon;
+                return (
+                  <div
+                    key={key}
+                    className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${
+                      isUnlocked
+                        ? "bg-accent/5 border-accent/20"
+                        : "bg-surface-light border-white/5 opacity-60"
+                    }`}
+                  >
+                    <div
+                      className={`flex items-center justify-center w-10 h-10 rounded-lg shrink-0 ${
+                        isUnlocked ? "bg-accent/10 border border-accent/20" : "bg-surface border border-white/5"
                       }`}
                     >
-                      <span className="text-2xl">{def.icon}</span>
-                      <div className="flex-1">
-                        <p className={`text-sm font-bold ${isDone ? 'text-white' : 'text-muted'}`}>
-                          {def.title}
-                        </p>
-                        <p className="text-[11px] text-muted">{def.desc}</p>
-                      </div>
-                      {isDone && (
-                        <div className="px-2 py-1 bg-accent/10 rounded-lg">
-                          <span className="text-[9px] font-black text-accent uppercase">Unlocked</span>
-                        </div>
+                      {isUnlocked ? (
+                        <Icon className="w-5 h-5 text-accent" />
+                      ) : (
+                        <Lock className="w-4 h-4 text-muted" />
                       )}
-                    </motion.div>
-                  );
-                })}
-              </div>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className={`text-sm font-semibold ${isUnlocked ? "text-white" : "text-muted"}`}>
+                        {def.title}
+                      </p>
+                      <p className="text-xs text-muted">{def.desc}</p>
+                    </div>
+                    {isUnlocked && (
+                      <span className="text-[10px] font-mono text-accent uppercase tracking-widest shrink-0">
+                        Unlocked
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </motion.div>
         </motion.div>

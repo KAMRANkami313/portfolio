@@ -1,41 +1,35 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 
-const Reveal = ({ children, width = "fit-content" }) => {
-  const ref = useRef(null);
+const Reveal = ({ children, delay = 0, className = "" }) => {
   const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef(null);
 
   useEffect(() => {
-    const element = ref.current;
-    if (!element) return;
-
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
-          observer.unobserve(element);
+          observer.disconnect();
         }
       },
-      { threshold: 0.1, rootMargin: '-50px' }
+      { threshold: 0.1 }
     );
 
-    observer.observe(element);
+    if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
   }, []);
 
   return (
-    <div style={{ position: "relative", width, overflow: "hidden" }} ref={ref}>
-      <div
-        className={isVisible ? 'animate-reveal-in will-animate' : 'opacity-0'}
-        style={{ opacity: isVisible ? undefined : 0 }}
-      >
-        {children}
-      </div>
-
-      <div
-        className={`absolute inset-y-0 left-0 right-0 bg-accent z-20 pointer-events-none opacity-20 ${
-          isVisible ? 'animate-reveal-overlay' : ''
-        }`}
-      />
+    <div
+      ref={ref}
+      className={className}
+      style={{
+        opacity: isVisible ? 1 : 0,
+        transform: isVisible ? "translateY(0)" : "translateY(20px)",
+        transition: `opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms`,
+      }}
+    >
+      {children}
     </div>
   );
 };

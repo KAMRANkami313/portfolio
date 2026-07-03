@@ -1,111 +1,93 @@
-import React, { useEffect, useRef, useCallback } from 'react';
+import React, { useEffect, useRef } from "react";
 
-const PARTICLE_COUNT = 35;
-const CONNECTION_DISTANCE = 100;
+const PARTICLE_COUNT_DESKTOP = 40;
+const PARTICLE_COUNT_MOBILE = 20;
+const CONNECTION_DISTANCE = 130;
+const MOUSE_REPULSION_DISTANCE = 100;
+
+const isMobile = () => window.innerWidth < 768;
 
 const Particles = () => {
   const canvasRef = useRef(null);
   const particlesRef = useRef([]);
   const mouseRef = useRef({ x: -1000, y: -1000 });
   const animationRef = useRef(null);
-
-  const initParticles = useCallback((width, height) => {
-    particlesRef.current = Array.from({ length: PARTICLE_COUNT }, () => ({
-      x: Math.random() * width,
-      y: Math.random() * height,
-      vx: (Math.random() - 0.5) * 0.3,
-      vy: (Math.random() - 0.5) * 0.3,
-      radius: Math.random() * 1.5 + 0.5,
-      opacity: Math.random() * 0.5 + 0.1,
-    }));
-  }, []);
+  const accentRef = useRef({ r: 99, g: 102, b: 241 });
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
 
-    let accentColor = { r: 99, g: 102, b: 241 };
+    const getAccentRgb = () => {
+      const cssVar = getComputedStyle(document.documentElement)
+        .getPropertyValue("--color-accent-rgb")
+        .trim();
+      if (cssVar) {
+        const [r, g, b] = cssVar.split(",").map((s) => parseInt(s.trim(), 10));
+        if (!isNaN(r) && !isNaN(g) && !isNaN(b)) return { r, g, b };
+      }
+      return { r: 99, g: 102, b: 241 };
+    };
 
     const resize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      if (particlesRef.current.length === 0) {
-        initParticles(canvas.width, canvas.height);
+    };
+
+    const initParticles = () => {
+      const count = isMobile() ? PARTICLE_COUNT_MOBILE : PARTICLE_COUNT_DESKTOP;
+      particlesRef.current = Array.from({ length: count }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        size: Math.random() * 1.5 + 0.5,
+      }));
+    };
+
+    const updateParticle = (p) => {
+      p.x += p.vx;
+      p.y += p.vy;
+
+      if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+      if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+      const dx = p.x - mouseRef.current.x;
+      const dy = p.y - mouseRef.current.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < MOUSE_REPULSION_DISTANCE && dist > 0) {
+        const force = (MOUSE_REPULSION_DISTANCE - dist) / MOUSE_REPULSION_DISTANCE;
+        p.x += (dx / dist) * force * 2;
+        p.y += (dy / dist) * force * 2;
       }
     };
 
-    resize();
-    window.addEventListener('resize', resize);
-
-    const handleMouseMove = (e) => {
-      mouseRef.current = { x: e.clientX, y: e.clientY };
-    };
-    window.addEventListener('mousemove', handleMouseMove, { passive: true });
-
-    // Cache accent color — only read once
-    try {
-      const hex = (getComputedStyle(document.documentElement).getPropertyValue('--color-accent').trim() || '#6366f1').replace('#', '');
-      accentColor = {
-        r: parseInt(hex.substring(0, 2), 16),
-        g: parseInt(hex.substring(2, 4), 16),
-        b: parseInt(hex.substring(4, 6), 16),
-      };
-    } catch {}
-
-    const { r, g, b } = accentColor;
-
-    const animate = () => {
+    const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const { r, g, b } = accentRef.current;
       const particles = particlesRef.current;
-      const mx = mouseRef.current.x;
-      const my = mouseRef.current.y;
 
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
-        p.x += p.vx;
-        p.y += p.vy;
-
-        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-
-        // Mouse repulsion
-        const dx = p.x - mx;
-        const dy = p.y - my;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 150) {
-          const force = (150 - dist) / 150;
-          p.vx += (dx / dist) * force * 0.02;
-          p.vy += (dy / dist) * force * 0.02;
-        }
-
-        // Speed limit
-        const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-        if (speed > 1) {
-          p.vx = (p.vx / speed);
-          p.vy = (p.vy / speed);
-        }
+        updateParticle(p);
 
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${p.opacity})`;
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.5)`;
         ctx.fill();
-      }
 
-      // Draw connections — only check nearby particles
-      for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
+          const p2 = particles[j];
+          const dx = p.x - p2.x;
+          const dy = p.y - p2.y;
           const distSq = dx * dx + dy * dy;
-          const maxDistSq = CONNECTION_DISTANCE * CONNECTION_DISTANCE;
-
-          if (distSq < maxDistSq) {
+          if (distSq < CONNECTION_DISTANCE * CONNECTION_DISTANCE) {
             const dist = Math.sqrt(distSq);
-            const opacity = (1 - dist / CONNECTION_DISTANCE) * 0.12;
+            const opacity = (1 - dist / CONNECTION_DISTANCE) * 0.2;
             ctx.beginPath();
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
             ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${opacity})`;
             ctx.lineWidth = 0.5;
             ctx.stroke();
@@ -113,23 +95,54 @@ const Particles = () => {
         }
       }
 
-      animationRef.current = requestAnimationFrame(animate);
+      animationRef.current = requestAnimationFrame(draw);
     };
 
-    animationRef.current = requestAnimationFrame(animate);
+    const handleMouseMove = (e) => {
+      mouseRef.current = { x: e.clientX, y: e.clientY };
+    };
+
+    const handleMouseLeave = () => {
+      mouseRef.current = { x: -1000, y: -1000 };
+    };
+
+    const handleResize = () => {
+      resize();
+      initParticles();
+    };
+
+    const themeObserver = new MutationObserver(() => {
+      accentRef.current = getAccentRgb();
+    });
+
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["style"],
+    });
+
+    resize();
+    initParticles();
+    accentRef.current = getAccentRgb();
+    draw();
+
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    window.addEventListener("mouseout", handleMouseLeave);
+    window.addEventListener("resize", handleResize);
 
     return () => {
-      window.removeEventListener('resize', resize);
-      window.removeEventListener('mousemove', handleMouseMove);
-      cancelAnimationFrame(animationRef.current);
+      if (animationRef.current) cancelAnimationFrame(animationRef.current);
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseout", handleMouseLeave);
+      window.removeEventListener("resize", handleResize);
+      themeObserver.disconnect();
     };
-  }, [initParticles]);
+  }, []);
 
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-0"
-      style={{ opacity: 0.6 }}
+      className="fixed inset-0 -z-10 pointer-events-none"
+      aria-hidden="true"
     />
   );
 };

@@ -1,54 +1,53 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
-import { FiAward, FiX } from 'react-icons/fi';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef, useMemo } from "react";
+import { Home, Compass, Trophy, Send, Palette, Command, Eye, Map, Sparkles, Award, X } from "lucide-react";
 
 const AchievementContext = createContext();
 
 const ACHIEVEMENT_DEFS = {
-  first_visit: { title: 'Welcome Explorer', desc: 'You visited the portfolio!', icon: '🏠' },
-  scrolled_half: { title: 'Deep Diver', desc: 'Scrolled past 50% of the page', icon: '🌊' },
-  scrolled_full: { title: 'Completionist', desc: 'Scrolled to the very bottom', icon: '🏆' },
-  used_chatbot: { title: 'AI Whisperer', desc: 'Had a conversation with KAMI_AI', icon: '🤖' },
-  sent_message: { title: 'First Contact', desc: 'Sent a contact message', icon: '📨' },
-  found_easter_egg: { title: 'The Explorer', desc: 'Discovered the Konami Code secret', icon: '🥚' },
-  changed_theme: { title: 'Style Changer', desc: 'Changed the accent color theme', icon: '🎨' },
-  used_command: { title: 'Power User', desc: 'Used the Command Palette (Ctrl+K)', icon: '⌨️' },
-  viewed_projects: { title: 'Code Reviewer', desc: 'Viewed the projects section', icon: '👀' },
-  visited_all_sections: { title: 'Full Scan', desc: 'Visited every section of the portfolio', icon: '📡' },
-  used_preset: { title: 'Theme Master', desc: 'Applied a theme preset', icon: '🎭' },
+  first_visit: { title: "Welcome Explorer", desc: "You visited the portfolio!", Icon: Home },
+  scrolled_half: { title: "Deep Diver", desc: "Scrolled past 50% of the page", Icon: Compass },
+  scrolled_full: { title: "Completionist", desc: "Scrolled to the very bottom", Icon: Trophy },
+  sent_message: { title: "First Contact", desc: "Sent a contact message", Icon: Send },
+  changed_theme: { title: "Style Changer", desc: "Changed the accent color theme", Icon: Palette },
+  used_command: { title: "Power User", desc: "Used the Command Palette (Ctrl+K)", Icon: Command },
+  viewed_projects: { title: "Code Reviewer", desc: "Viewed the projects section", Icon: Eye },
+  visited_all_sections: { title: "Full Scan", desc: "Visited every section of the portfolio", Icon: Map },
+  used_preset: { title: "Theme Master", desc: "Applied a theme preset", Icon: Sparkles },
 };
 
 export const AchievementProvider = ({ children }) => {
   const [unlocked, setUnlocked] = useState(() => {
     try {
-      const saved = localStorage.getItem('kamran-achievements');
+      const saved = localStorage.getItem("kamran-achievements");
       return saved ? JSON.parse(saved) : {};
-    } catch { return {}; }
+    } catch {
+      return {};
+    }
   });
 
-  const [popup, setPopup] = useState(null);
+  const [popup, setPopupState] = useState(null);
   const [popupQueue, setPopupQueue] = useState([]);
   const [isExiting, setIsExiting] = useState(false);
-  const popupTimerRef = useRef(null);
+
+  const unlockedRef = useRef(unlocked);
+  const popupRef = useRef(null);
+  const outerTimerRef = useRef(null);
+  const innerTimerRef = useRef(null);
 
   useEffect(() => {
-    localStorage.setItem('kamran-achievements', JSON.stringify(unlocked));
+    unlockedRef.current = unlocked;
+    localStorage.setItem("kamran-achievements", JSON.stringify(unlocked));
   }, [unlocked]);
 
-  useEffect(() => {
-    if (popup) {
-      setIsExiting(false);
-      popupTimerRef.current = setTimeout(() => {
-        setIsExiting(true);
-        setTimeout(() => {
-          setPopup(null);
-          setIsExiting(false);
-        }, 400);
-      }, 4000);
-      return () => {
-        if (popupTimerRef.current) clearTimeout(popupTimerRef.current);
-      };
-    }
-  }, [popup]);
+  const setPopup = useCallback((nextPopup) => {
+    popupRef.current = nextPopup;
+    setPopupState(nextPopup);
+  }, []);
+
+  const clearPopup = useCallback(() => {
+    popupRef.current = null;
+    setPopupState(null);
+  }, []);
 
   useEffect(() => {
     if (!popup && popupQueue.length > 0) {
@@ -56,59 +55,91 @@ export const AchievementProvider = ({ children }) => {
       setPopup(next);
       setPopupQueue(rest);
     }
-  }, [popup, popupQueue]);
+  }, [popup, popupQueue, setPopup]);
+
+  useEffect(() => {
+    if (popup) {
+      setIsExiting(false);
+      outerTimerRef.current = setTimeout(() => {
+        setIsExiting(true);
+        innerTimerRef.current = setTimeout(() => {
+          clearPopup();
+          setIsExiting(false);
+        }, 400);
+      }, 4000);
+      return () => {
+        if (outerTimerRef.current) clearTimeout(outerTimerRef.current);
+        if (innerTimerRef.current) clearTimeout(innerTimerRef.current);
+      };
+    }
+  }, [popup, clearPopup]);
 
   const unlock = useCallback((key) => {
-    if (unlocked[key]) return;
+    if (unlockedRef.current[key]) return;
     const def = ACHIEVEMENT_DEFS[key];
     if (!def) return;
-    setUnlocked((prev) => ({ ...prev, [key]: Date.now() }));
-    if (popup) {
-      setPopupQueue((prev) => [...prev, { key, ...def }]);
+
+    const newUnlocked = { ...unlockedRef.current, [key]: Date.now() };
+    unlockedRef.current = newUnlocked;
+    setUnlocked(newUnlocked);
+
+    if (popupRef.current) {
+      setPopupQueue((q) => [...q, { key, ...def }]);
     } else {
       setPopup({ key, ...def });
     }
-  }, [unlocked, popup]);
+  }, [setPopup]);
 
   const isUnlocked = useCallback((key) => !!unlocked[key], [unlocked]);
+
+  const dismissPopup = useCallback(() => {
+    setIsExiting(true);
+    if (outerTimerRef.current) clearTimeout(outerTimerRef.current);
+    innerTimerRef.current = setTimeout(() => {
+      clearPopup();
+      setIsExiting(false);
+    }, 400);
+  }, [clearPopup]);
 
   const total = Object.keys(ACHIEVEMENT_DEFS).length;
   const count = Object.keys(unlocked).length;
 
-  const dismissPopup = useCallback(() => {
-    setIsExiting(true);
-    setTimeout(() => {
-      setPopup(null);
-      setIsExiting(false);
-    }, 400);
-    if (popupTimerRef.current) clearTimeout(popupTimerRef.current);
-  }, []);
+  const value = useMemo(
+    () => ({ unlock, isUnlocked, unlocked, total, count, defs: ACHIEVEMENT_DEFS }),
+    [unlock, isUnlocked, unlocked, count]
+  );
 
   return (
-    <AchievementContext.Provider value={{ unlock, isUnlocked, unlocked, total, count, defs: ACHIEVEMENT_DEFS }}>
+    <AchievementContext.Provider value={value}>
       {children}
       {popup && (
         <div
-          className={`fixed top-6 left-1/2 -translate-x-1/2 z-1000 flex items-center gap-4 px-6 py-4 bg-surface/95 backdrop-blur-2xl border border-accent/20 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.5)] will-animate ${
-            isExiting ? 'opacity-0 -translate-y-5 scale-95' : 'animate-achievement-in'
+          className={`fixed top-6 left-1/2 -translate-x-1/2 z-1000 flex items-center gap-4 px-6 py-4 glass-strong rounded-2xl shadow-lg will-animate ${
+            isExiting ? "opacity-0 -translate-y-5 scale-95" : "animate-scale-in"
           }`}
-          style={{ transition: isExiting ? 'all 0.3s ease-in' : undefined }}
+          style={{ transition: isExiting ? "all 0.3s ease-in" : undefined }}
+          role="alert"
+          aria-live="polite"
         >
-          <div className="text-3xl animate-badge-pop">{popup.icon}</div>
+          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-accent/10 border border-accent/20">
+            <popup.Icon className="w-5 h-5 text-accent" />
+          </div>
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
-              <FiAward className="text-accent text-xs" />
-              <span className="text-[9px] font-black text-accent uppercase tracking-[0.3em]">Achievement_Unlocked</span>
+              <Award className="w-3 h-3 text-accent" />
+              <span className="text-[9px] font-black text-accent uppercase tracking-[0.3em]">
+                Achievement Unlocked
+              </span>
             </div>
             <p className="text-sm font-bold text-white mt-0.5">{popup.title}</p>
-            <p className="text-[11px] text-white/50">{popup.desc}</p>
+            <p className="text-[11px] text-muted">{popup.desc}</p>
           </div>
           <button
             onClick={dismissPopup}
             className="ml-4 p-1.5 text-white/20 hover:text-white transition-colors"
             aria-label="Dismiss achievement"
           >
-            <FiX size={14} />
+            <X size={14} />
           </button>
         </div>
       )}
