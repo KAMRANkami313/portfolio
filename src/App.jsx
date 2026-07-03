@@ -13,6 +13,8 @@ const TechMarquee = lazy(() => import("./components/ui/TechMarquee"));
 const Projects = lazy(() => import("./components/sections/Projects"));
 const Skills = lazy(() => import("./components/sections/Skills"));
 const Experience = lazy(() => import("./components/sections/Experience"));
+const Internships = lazy(() => import("./components/sections/Internships"));
+const Certificates = lazy(() => import("./components/sections/Certificates"));
 const Testimonials = lazy(() => import("./components/sections/Testimonials"));
 const Contact = lazy(() => import("./components/sections/Contact"));
 
@@ -45,7 +47,7 @@ const App = () => {
   }, [unlock]);
 
   useEffect(() => {
-    const sectionIds = ["about", "projects", "skills", "experience", "testimonials", "contact"];
+    const sectionIds = ["about", "projects", "skills", "experience", "internships", "certificates", "testimonials", "contact"];
     const visited = new Set();
     const observed = new Set();
 
@@ -104,6 +106,14 @@ const App = () => {
 
       <Suspense fallback={<div className="h-32" />}>
         <Experience />
+      </Suspense>
+
+      <Suspense fallback={<div className="h-32" />}>
+        <Internships />
+      </Suspense>
+
+      <Suspense fallback={<div className="h-32" />}>
+        <Certificates />
       </Suspense>
 
       <Suspense fallback={<div className="h-32" />}>

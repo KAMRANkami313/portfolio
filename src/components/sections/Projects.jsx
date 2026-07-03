@@ -1,14 +1,71 @@
 import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ExternalLink, AlertCircle, Cpu, Zap, TrendingUp, FolderOpen } from "lucide-react";
-import { GithubIcon as Github } from "../ui/BrandIcons";
-import { PROJECTS } from "../../constants";
+import {ExternalLink, Cpu, Zap, TrendingUp, FolderOpen, Code2 } from "lucide-react";
+import{GithubIcon as Github} from "../ui/BrandIcons";
+import { PROJECTS, PROJECT_CATEGORIES } from "../../constants";
 import SpotlightCard from "../ui/SpotlightCard";
 import Architecture from "../ui/Architecture";
 
-const CATEGORIES = ["All", "React", "Node.js", "MongoDB", "React Native"];
-
 const METRIC_ICONS = [Cpu, Zap, TrendingUp];
+
+const ProjectImage = ({ project }) => {
+  if (project.image) {
+    return (
+      <div className="relative aspect-video overflow-hidden bg-surface-light">
+        <img
+          src={project.image}
+          alt={`${project.title} screenshot`}
+          loading="lazy"
+          decoding="async"
+          className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+        />
+        {project.featured && (
+          <div
+            className="absolute top-3 left-3 chip text-[10px]"
+            style={{ background: "rgba(var(--color-accent-rgb), 0.9)", borderColor: "transparent", color: "#fff" }}
+          >
+            Featured
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  const initial = project.title.charAt(0);
+  return (
+    <div className="relative aspect-video overflow-hidden">
+      <div
+        className="absolute inset-0"
+        style={{
+          background: "linear-gradient(135deg, var(--color-surface-light), var(--color-surface))",
+        }}
+      />
+      <div
+        className="absolute inset-0 opacity-10"
+        style={{
+          backgroundImage: "radial-gradient(circle, var(--color-accent) 1px, transparent 1px)",
+          backgroundSize: "24px 24px",
+        }}
+      />
+      <div className="absolute inset-0 flex items-center justify-center">
+        <span
+          className="text-7xl font-black text-gradient opacity-30"
+          style={{ fontFamily: "var(--font-mono)" }}
+        >
+          {initial}
+        </span>
+      </div>
+      {project.featured && (
+        <div
+          className="absolute top-3 left-3 chip text-[10px]"
+          style={{ background: "rgba(var(--color-accent-rgb), 0.9)", borderColor: "transparent", color: "#fff" }}
+        >
+          Featured
+        </div>
+      )}
+    </div>
+  );
+};
 
 const Projects = () => {
   const [filter, setFilter] = useState("All");
@@ -31,12 +88,12 @@ const Projects = () => {
             </h2>
           </div>
           <p className="text-sm text-muted md:max-w-xs">
-            A selection of production-grade applications I've engineered end-to-end.
+            {PROJECTS.length} projects shipped — {PROJECTS.filter((p) => p.live !== "#").length} live in production.
           </p>
         </div>
 
         <div className="flex flex-wrap gap-2 mb-10">
-          {CATEGORIES.map((cat) => (
+          {PROJECT_CATEGORIES.map((cat) => (
             <button
               key={cat}
               onClick={() => setFilter(cat)}
@@ -56,9 +113,7 @@ const Projects = () => {
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <FolderOpen className="w-12 h-12 text-muted mb-4" />
             <p className="text-lg font-medium text-white mb-1">No projects found</p>
-            <p className="text-sm text-muted">
-              Try selecting a different filter.
-            </p>
+            <p className="text-sm text-muted">Try selecting a different filter.</p>
           </div>
         ) : (
           <motion.div layout className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -72,26 +127,13 @@ const Projects = () => {
                   exit={{ opacity: 0, scale: 0.96 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <SpotlightCard className="card card-hover h-full p-0 overflow-hidden">
-                    <div className="relative aspect-video overflow-hidden bg-surface-light">
-                      <img
-                        src={project.image}
-                        alt={`${project.title} screenshot`}
-                        loading="lazy"
-                        decoding="async"
-                        className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                      />
-                      {project.featured && (
-                        <div className="absolute top-3 left-3 chip" style={{ background: "rgba(var(--color-accent-rgb), 0.9)", borderColor: "transparent", color: "#fff" }}>
-                          Featured
-                        </div>
-                      )}
-                    </div>
+                  <SpotlightCard className="card card-hover h-full p-0 overflow-hidden group">
+                    <ProjectImage project={project} />
 
                     <div className="p-6">
                       <div className="flex items-start justify-between gap-4 mb-2">
-                        <div>
-                          <h3 className="text-xl font-bold text-white mb-1">{project.title}</h3>
+                        <div className="min-w-0">
+                          <h3 className="text-xl font-bold text-white mb-1 truncate">{project.title}</h3>
                           <p className="text-sm text-muted">{project.subtitle}</p>
                         </div>
                         <div className="flex items-center gap-1 shrink-0">
@@ -145,22 +187,23 @@ const Projects = () => {
                         ))}
                       </div>
 
-                      <div className="space-y-3 pt-4 border-t border-white/10">
-                        <div>
-                          <p className="text-[10px] font-mono text-accent uppercase tracking-widest mb-1">
-                            Challenge
-                          </p>
-                          <p className="text-sm text-muted leading-relaxed">{project.challenge}</p>
+                      {project.featured && (
+                        <div className="space-y-3 pt-4 border-t border-white/10">
+                          <div>
+                            <p className="text-[10px] font-mono text-accent uppercase tracking-widest mb-1">
+                              Challenge
+                            </p>
+                            <p className="text-sm text-muted leading-relaxed">{project.challenge}</p>
+                          </div>
+                          <div>
+                            <p className="text-[10px] font-mono text-accent uppercase tracking-widest mb-1">
+                              Solution
+                            </p>
+                            <p className="text-sm text-muted leading-relaxed">{project.solution}</p>
+                          </div>
+                          <Architecture />
                         </div>
-                        <div>
-                          <p className="text-[10px] font-mono text-accent uppercase tracking-widest mb-1">
-                            Solution
-                          </p>
-                          <p className="text-sm text-muted leading-relaxed">{project.solution}</p>
-                        </div>
-                      </div>
-
-                      {project.featured && <Architecture />}
+                      )}
                     </div>
                   </SpotlightCard>
                 </motion.div>
