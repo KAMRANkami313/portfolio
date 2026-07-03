@@ -2,12 +2,14 @@ import React, { useState, useEffect, useRef } from "react";
 import { Palette, Check } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
 import { useAchievement } from "../../context/AchievementContext";
+import { useAudio } from "../../hooks/useAudio";
 
 const ThemePresets = () => {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef(null);
-  const { accent, activePreset, applyPreset, presets } = useTheme();
+  const { accent, activePreset, applyPreset, setAccent, presets } = useTheme();
   const { unlock } = useAchievement();
+  const { playClick } = useAudio();
 
   useEffect(() => {
     if (!isOpen) return;
@@ -31,16 +33,25 @@ const ThemePresets = () => {
   }, [isOpen]);
 
   const handlePresetClick = (presetId) => {
+    playClick();
     applyPreset(presetId);
     unlock("used_preset");
-    unlock("changed_theme");
     setIsOpen(false);
+  };
+
+  const handleCustomColor = (e) => {
+    playClick();
+    setAccent(e.target.value);
+    unlock("changed_theme");
   };
 
   return (
     <div ref={containerRef} className="relative">
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => {
+          playClick();
+          setIsOpen(!isOpen);
+        }}
         className="p-2 text-muted hover:text-white transition-colors"
         aria-label="Open theme presets"
         aria-expanded={isOpen}
@@ -77,15 +88,7 @@ const ThemePresets = () => {
               <input
                 type="color"
                 value={accent}
-                onChange={(e) => {
-                  applyPreset("custom");
-                  document.documentElement.style.setProperty("--color-accent", e.target.value);
-                  const r = parseInt(e.target.value.slice(1, 3), 16);
-                  const g = parseInt(e.target.value.slice(3, 5), 16);
-                  const b = parseInt(e.target.value.slice(5, 7), 16);
-                  document.documentElement.style.setProperty("--color-accent-rgb", `${r}, ${g}, ${b}`);
-                  unlock("changed_theme");
-                }}
+                onChange={handleCustomColor}
                 className="w-8 h-8 rounded cursor-pointer bg-transparent border border-white/10"
                 aria-label="Pick custom accent color"
               />

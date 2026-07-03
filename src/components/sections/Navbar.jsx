@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Menu, X, Award, Sparkles } from "lucide-react";
+import { Menu, X, Award } from "lucide-react";
 import { NAV_LINKS } from "../../constants";
 import ThemePresets from "../ui/ThemePresets";
 import TimeDisplay from "../ui/TimeDisplay";
+import { useAudio } from "../../hooks/useAudio";
 
 const Navbar = ({ onAchievementsClick }) => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -10,6 +11,7 @@ const Navbar = ({ onAchievementsClick }) => {
   const [activeSection, setActiveSection] = useState("");
   const mobileMenuRef = useRef(null);
   const mobileToggleRef = useRef(null);
+  const { playClick, playHover } = useAudio();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -67,7 +69,10 @@ const Navbar = ({ onAchievementsClick }) => {
     };
   }, [isMobileMenuOpen]);
 
-  const handleLinkClick = () => setIsMobileMenuOpen(false);
+  const handleLinkClick = () => {
+    playClick();
+    setIsMobileMenuOpen(false);
+  };
 
   return (
     <nav
@@ -85,6 +90,7 @@ const Navbar = ({ onAchievementsClick }) => {
         >
           <a
             href="#hero"
+            onClick={playClick}
             className="flex items-center gap-2 font-bold text-lg"
             aria-label="Muhammad Kamran — Home"
           >
@@ -99,6 +105,8 @@ const Navbar = ({ onAchievementsClick }) => {
                 <a
                   key={link.href}
                   href={link.href}
+                  onClick={playClick}
+                  onMouseEnter={playHover}
                   aria-current={isActive ? "page" : undefined}
                   className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
                     isActive ? "text-white" : "text-muted hover:text-white"
@@ -114,19 +122,30 @@ const Navbar = ({ onAchievementsClick }) => {
             <ThemePresets />
             <TimeDisplay />
             <button
-              onClick={onAchievementsClick}
+              onClick={() => {
+                playClick();
+                onAchievementsClick();
+              }}
               className="hidden md:flex btn-ghost p-2"
               aria-label="View achievements"
               title="Achievements"
             >
               <Award size={18} />
             </button>
-            <a href="#contact" className="hidden md:inline-flex btn-primary">
+            <a
+              href="#contact"
+              onClick={playClick}
+              onMouseEnter={playHover}
+              className="hidden md:inline-flex btn-primary"
+            >
               Hire Me
             </a>
             <button
               ref={mobileToggleRef}
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              onClick={() => {
+                playClick();
+                setIsMobileMenuOpen(!isMobileMenuOpen);
+              }}
               className="lg:hidden p-2 text-white"
               aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
               aria-expanded={isMobileMenuOpen}
@@ -152,6 +171,7 @@ const Navbar = ({ onAchievementsClick }) => {
                     key={link.href}
                     href={link.href}
                     onClick={handleLinkClick}
+                    onMouseEnter={playHover}
                     aria-current={isActive ? "page" : undefined}
                     className={`px-3 py-2.5 text-sm font-medium rounded-lg transition-colors ${
                       isActive ? "text-white bg-accent/10" : "text-muted hover:text-white hover:bg-surface-light"
@@ -181,6 +201,7 @@ const Navbar = ({ onAchievementsClick }) => {
             <a
               href="#contact"
               onClick={handleLinkClick}
+              onMouseEnter={playHover}
               className="mt-3 inline-flex btn-primary w-full justify-center"
             >
               Hire Me

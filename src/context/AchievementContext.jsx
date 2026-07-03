@@ -8,18 +8,30 @@ const ACHIEVEMENT_DEFS = {
   scrolled_half: { title: "Deep Diver", desc: "Scrolled past 50% of the page", Icon: Compass },
   scrolled_full: { title: "Completionist", desc: "Scrolled to the very bottom", Icon: Trophy },
   sent_message: { title: "First Contact", desc: "Sent a contact message", Icon: Send },
-  changed_theme: { title: "Style Changer", desc: "Changed the accent color theme", Icon: Palette },
+  changed_theme: { title: "Style Changer", desc: "Changed the accent color with the custom color picker", Icon: Palette },
   used_command: { title: "Power User", desc: "Used the Command Palette (Ctrl+K)", Icon: Command },
   viewed_projects: { title: "Code Reviewer", desc: "Viewed the projects section", Icon: Eye },
   visited_all_sections: { title: "Full Scan", desc: "Visited every section of the portfolio", Icon: Map },
   used_preset: { title: "Theme Master", desc: "Applied a theme preset", Icon: Sparkles },
 };
 
+const VALID_KEYS = Object.keys(ACHIEVEMENT_DEFS);
+
+const cleanStaleEntries = (obj) => {
+  const cleaned = {};
+  VALID_KEYS.forEach((key) => {
+    if (obj[key]) cleaned[key] = obj[key];
+  });
+  return cleaned;
+};
+
 export const AchievementProvider = ({ children }) => {
   const [unlocked, setUnlocked] = useState(() => {
     try {
       const saved = localStorage.getItem("kamran-achievements");
-      return saved ? JSON.parse(saved) : {};
+      if (!saved) return {};
+      const parsed = JSON.parse(saved);
+      return cleanStaleEntries(parsed);
     } catch {
       return {};
     }
@@ -101,8 +113,8 @@ export const AchievementProvider = ({ children }) => {
     }, 400);
   }, [clearPopup]);
 
-  const total = Object.keys(ACHIEVEMENT_DEFS).length;
-  const count = Object.keys(unlocked).length;
+  const total = VALID_KEYS.length;
+  const count = VALID_KEYS.filter((key) => unlocked[key]).length;
 
   const value = useMemo(
     () => ({ unlock, isUnlocked, unlocked, total, count, defs: ACHIEVEMENT_DEFS }),
